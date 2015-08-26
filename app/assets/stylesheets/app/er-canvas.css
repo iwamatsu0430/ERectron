@@ -6,6 +6,10 @@
   font-family: CamptonLight;
   src: url("../fonts/Campton-LightDEMO.otf") format("opentype"); }
 
+@font-face {
+  font-family: RictyDiminished;
+  src: url("../fonts/RictyDiminished-Regular.ttf") format("truetype"); }
+
 .sg-container {
   background: #0AA2E4;
   position: fixed;
@@ -38,6 +42,21 @@ er-canvas {
   position: absolute;
   border: 1px solid #ccc;
   top: 0;
-  left: 0; }
-  .pg-canvas-table header h1 {
-    margin: 0; }
+  left: 0;
+  border-radius: 3px;
+  font-family: RictyDiminished; }
+  .pg-canvas-table header {
+    border-bottom: 1px solid #ccc;
+    padding: 5px; }
+    .pg-canvas-table header h1 {
+      margin: 0;
+      font-size: 14px; }
+  .pg-canvas-table main {
+    padding: 5px; }
+    .pg-canvas-table main ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0; }
+      .pg-canvas-table main ul h2 {
+        margin: 0;
+        font-size: 12px; }

@@ -28,6 +28,10 @@ $space-9:  575px;
 $size-top-logo: 72px;
 $size-top-menu: 36px;
 
+$size-font-table-title: 14px;
+$size-font-table-column: 12px;
+
+$border-radius-table: 3px;
 
 @font-face {
   font-family: CamptonBold;
@@ -37,6 +41,11 @@ $size-top-menu: 36px;
 @font-face {
   font-family: CamptonLight;
   src: url("../fonts/Campton-LightDEMO.otf") format("opentype");
+}
+
+@font-face {
+  font-family: RictyDiminished;
+  src: url("../fonts/RictyDiminished-Regular.ttf") format("truetype");
 }
 
 .sg-container {

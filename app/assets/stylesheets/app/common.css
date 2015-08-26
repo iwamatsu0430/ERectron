@@ -6,6 +6,10 @@
   font-family: CamptonLight;
   src: url("../fonts/Campton-LightDEMO.otf") format("opentype"); }
 
+@font-face {
+  font-family: RictyDiminished;
+  src: url("../fonts/RictyDiminished-Regular.ttf") format("truetype"); }
+
 .sg-container {
   background: #0AA2E4;
   position: fixed;

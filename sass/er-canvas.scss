@@ -29,11 +29,31 @@ er-canvas {
   border: 1px solid #ccc;
   top: 0;
   left: 0;
+  border-radius: $border-radius-table;
+  font-family: RictyDiminished;
 
   & header {
+    border-bottom: 1px solid #ccc;
+    padding: $space-0;
 
     & h1 {
       margin: 0;
+      font-size: $size-font-table-title;
+    }
+  }
+
+  & main {
+    padding: $space-0;
+
+    & ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+
+      & h2 {
+        margin: 0;
+        font-size: $size-font-table-column;
+      }
     }
   }
 }
