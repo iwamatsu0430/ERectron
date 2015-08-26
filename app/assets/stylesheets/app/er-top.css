@@ -1,0 +1,90 @@
+@font-face {
+  font-family: CamptonBold;
+  src: url("../fonts/Campton-BoldDEMO.otf") format("opentype"); }
+
+@font-face {
+  font-family: CamptonLight;
+  src: url("../fonts/Campton-LightDEMO.otf") format("opentype"); }
+
+.sg-container {
+  background: #0AA2E4;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; }
+
+er-top {
+  display: block;
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  transition: all 0.5s; }
+  er-top.pg-top-display {
+    opacity: 1;
+    left: 0; }
+
+.pg-main-top {
+  text-align: center; }
+  .pg-main-top > header {
+    margin-bottom: 85px; }
+    .pg-main-top > header h1 {
+      color: #FFFFFF;
+      font-size: 72px;
+      font-family: CamptonBold;
+      cursor: default; }
+  .pg-main-top > ul {
+    list-style: none;
+    margin: 0;
+    padding: 0; }
+    .pg-main-top > ul > li {
+      margin-bottom: 50px; }
+  .pg-main-top > footer {
+    margin-top: 85px;
+    color: rgba(255, 255, 255, 0.7);
+    font-family: CamptonLight; }
+
+.pg-main-top-open,
+.pg-main-top-create,
+.pg-main-top-recent {
+  margin: 35px 0 0;
+  font-size: 36px;
+  font-weight: normal;
+  font-family: CamptonLight; }
+  .pg-main-top-open i,
+  .pg-main-top-create i,
+  .pg-main-top-recent i {
+    transition: all 0.5s; }
+  .pg-main-top-open a,
+  .pg-main-top-create a,
+  .pg-main-top-recent a {
+    position: relative;
+    padding: 15px;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.2s; }
+    .pg-main-top-open a:hover,
+    .pg-main-top-create a:hover,
+    .pg-main-top-recent a:hover {
+      background: #5DBEE8; }
+
+.pg-main-top-open .fa-folder,
+.pg-main-top-open .fa-folder-open {
+  opacity: 0; }
+  .pg-main-top-open .fa-folder.pg-main-top-open-show,
+  .pg-main-top-open .fa-folder-open.pg-main-top-open-show {
+    opacity: 1; }
+
+.pg-main-top-open .fa-folder-open {
+  position: absolute;
+  left: 13px; }
+
+.pg-main-top-create a:hover i {
+  transform: rotateY(-360deg); }
+
+.pg-main-top-recent a:hover i {
+  transform: rotateZ(-360deg); }

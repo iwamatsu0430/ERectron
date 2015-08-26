@@ -1,0 +1,10 @@
+{
+  "language": "english",
+  "string": {
+    "er-top": {
+      "open": "ERDを開く",
+      "create": "ERDを作成する",
+      "recent": "最近開いたERD"
+    }
+  }
+}

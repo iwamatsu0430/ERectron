@@ -1,0 +1,10 @@
+{
+  "language": "english",
+  "string": {
+    "er-top": {
+      "open": "Open ERD",
+      "create": "Create ERD",
+      "recent": "Open Recent"
+    }
+  }
+}

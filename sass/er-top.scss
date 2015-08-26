@@ -1,0 +1,99 @@
+@import "common.scss";
+
+er-top {
+  display: block;
+  opacity: 0;
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  transition: all 0.5s;
+
+  &.pg-top-display {
+    opacity: 1;
+    left: 0;
+  }
+}
+
+.pg-main-top {
+  text-align: center;
+
+  & > header {
+    margin-bottom: $space-5;
+
+    & h1 {
+      color: $color-light;
+      font-size: $size-top-logo;
+      font-family: CamptonBold;
+      cursor: default;
+    }
+  }
+
+  & > ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    & > li {
+      margin-bottom: $space-4;
+    }
+  }
+
+  & > footer {
+    margin-top: $space-5;
+    color: $rgba-light-alpha;
+    font-family: CamptonLight;
+  }
+}
+
+.pg-main-top-open,
+.pg-main-top-create,
+.pg-main-top-recent {
+  margin: $space-3 0 0;
+  font-size: $size-top-menu;
+  font-weight: normal;
+  font-family: CamptonLight;
+
+  & i {
+    transition: all 0.5s;
+  }
+
+  & a {
+    position: relative;
+    padding: $space-2;
+    color: $rgba-light-alpha;
+    text-decoration: none;
+    border-radius: $space-1;
+    transition: all 0.2s;
+
+    &:hover {
+      background: $color-primary-1;
+    }
+  }
+}
+
+.pg-main-top-open {
+
+  & .fa-folder,
+  & .fa-folder-open {
+    opacity: 0;
+
+    &.pg-main-top-open-show {
+      opacity: 1;
+    }
+  }
+
+  & .fa-folder-open {
+    position: absolute;
+    left: 13px;
+  }
+}
+
+.pg-main-top-create a:hover i {
+  transform: rotateY(-360deg);
+}
+
+.pg-main-top-recent a:hover i {
+  transform: rotateZ(-360deg);
+}

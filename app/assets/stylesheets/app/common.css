@@ -1,0 +1,15 @@
+@font-face {
+  font-family: CamptonBold;
+  src: url("../fonts/Campton-BoldDEMO.otf") format("opentype"); }
+
+@font-face {
+  font-family: CamptonLight;
+  src: url("../fonts/Campton-LightDEMO.otf") format("opentype"); }
+
+.sg-container {
+  background: #0AA2E4;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%; }
