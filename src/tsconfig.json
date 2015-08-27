@@ -24,6 +24,7 @@
         "./app.ts",
         "./er-canvas/er-canvas.ts",
         "./er-top/er-top.ts",
-        "./resource/eventName.ts"
+        "./resource/eventName.ts",
+        "./resource/exampleERD.ts"
     ]
 }

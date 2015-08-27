@@ -62,6 +62,7 @@ gulp.task('clean', function() {
 gulp.task("typescript", function() {
   return gulp.src(typescriptFiles)
     .pipe(tsc({
+      typescript: require("typescript"),
       noImplicitAny: true,
       removeComments: true,
       out: 'riot-components.js'
