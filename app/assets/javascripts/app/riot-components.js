@@ -4,6 +4,10 @@ var EventName = (function () {
     EventName.app = {
         onLoadFile: "onAppLoadFile"
     };
+    EventName.canvas = {
+        onColorUpdate: "onColorUpdate",
+        onLineUpdate: "onLineUpdate"
+    };
     return EventName;
 })();
 /// <reference path="../bower_components/riot-ts/riot-ts.d.ts" />
@@ -354,134 +358,6 @@ var ExampleERD = (function () {
 })();
 /// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
 /// <reference path="../resource/eventName.ts"/>
-/// <reference path="../resource/exampleERD.ts"/>
-var ErCanvas = (function (_super) {
-    __extends(ErCanvas, _super);
-    function ErCanvas() {
-        var _this = this;
-        _super.call(this);
-        this.global = {};
-        this.tables = [];
-        this.relations = [];
-        this.mouse = {
-            isClick: false,
-            target: null,
-            offset: {
-                x: 0,
-                y: 0
-            }
-        };
-        this.onMouseDownTable = function (e) {
-            _this.mouse.isClick = true;
-            _this.mouse.target = e.item;
-            _this.mouse.offset.x = e.offsetX;
-            _this.mouse.offset.y = e.offsetY;
-        };
-        this.renderCSS = function (parent) {
-            return "\n    .pg-canvas-table-color-" + parent.name + " {\n      border-color: " + parent.border + " !important;\n    }\n    .pg-canvas-table-color-" + parent.name + " header {\n      background: " + parent.background.header + ";\n      color: " + parent.text.header + ";\n      border-color: " + parent.border + ";\n    }\n    .pg-canvas-table-color-" + parent.name + " main {\n      background: " + parent.background.body + ";\n      color: " + parent.text.body + ";\n    }";
-        };
-        this.renderRelation = function (relation) {
-            var line = _this.root.querySelector(".pg-canvas-svg-style-" + relation.name.physical);
-            var fromTable = _this.findTableByPhysicalName(relation.from.table);
-            var toTable = _this.findTableByPhysicalName(relation.to.table);
-            if (fromTable == null || toTable == null) {
-                return;
-            }
-            var fromElement = _this.root.querySelector('section[name="table-' + fromTable.name.physical + '"]');
-            var toElement = _this.root.querySelector('section[name="table-' + toTable.name.physical + '"]');
-            line.setAttribute("x1", (fromTable.position.x + fromElement.offsetWidth / 2).toString());
-            line.setAttribute("y1", (fromTable.position.y + fromElement.offsetHeight / 2).toString());
-            line.setAttribute("x2", (toTable.position.x + toElement.offsetWidth / 2).toString());
-            line.setAttribute("y2", (toTable.position.y + toElement.offsetHeight / 2).toString());
-            line.setAttribute("stroke", relation.style.color);
-            line.setAttribute("stroke-width", relation.style.width);
-            if (relation.style.dasharray) {
-                line.setAttribute("stroke-dasharray", relation.style.dasharray);
-            }
-        };
-        this.findTableByPhysicalName = function (tablePhysicalName) {
-            var targetTable = null;
-            _this.tables.forEach(function (table) {
-                if (table.name.physical == tablePhysicalName) {
-                    targetTable = table;
-                }
-            });
-            return targetTable;
-        };
-        this.global = {
-            colors: ExampleERD.colors
-        };
-        this.tables = ExampleERD.tables;
-        this.relations = ExampleERD.relations;
-        window.observable.on(EventName.app.onLoadFile, function (filePath) {
-            if (filePath) {
-            }
-        });
-        window.addEventListener("mousemove", function (e) {
-            if (_this.mouse.isClick) {
-                _this.mouse.target.position.x = e.pageX - _this.mouse.offset.x;
-                _this.mouse.target.position.y = e.pageY - _this.mouse.offset.y;
-                _this.update();
-                setTimeout(function () { return window.observable.trigger("onLineUpdate"); }, 10);
-            }
-        });
-        window.addEventListener("mouseup", function (e) {
-            _this.mouse.isClick = false;
-            _this.mouse.target = null;
-        });
-        window.observable.on("onColorUpdate", function () {
-            _this.global["colors"].forEach(function (color) {
-                _this.update();
-                _this.root.querySelector(".pg-canvas-table-style-" + color.name).innerHTML = _this.renderCSS(color);
-            });
-        });
-        window.observable.on("onLineUpdate", function () {
-            _this.relations.forEach(function (relation) {
-                _this.update();
-                _this.renderRelation(relation);
-            });
-        });
-        this.on("mount", function () {
-            window.observable.trigger("onColorUpdate");
-            window.observable.trigger("onLineUpdate");
-        });
-    }
-    ErCanvas = __decorate([
-        template('\
-<er-canvas>\
-  <main class="pg-main-canvas">\
-    <svg each={relations} class="pg-canvas-svg" xmlns="http://www.w3.org/2000/svg">\
-      <line class="pg-canvas-svg-style-{name.physical}" />\
-    </svg>\
-    <div class="pg-canvas-container">\
-      <div class="pg-canvas-table" each={tables} style="left: {position.x}px; top: {position.y}px">\
-        <section name="table-{name.physical}" class="pg-canvas-table-color-{default: !color}{color}">\
-          <header onmousedown={onMouseDownTable}>\
-            <h1>{name.logical}<span if={name.logical && name.physical}> / </span>{name.physical}</h1>\
-          </header>\
-          <main>\
-            <ul>\
-              <li each={columns}>\
-                <h2>{name.logical}<span if={name.logical && name.physical}> / </span>{name.physical}</h2>\
-              </li>\
-            </ul>\
-          </main>\
-          <footer>\
-          </footer>\
-        </section>\
-      </div>\
-    </div>\
-  </main>\
-  <section each={global.colors}>\
-    <style class="pg-canvas-table-style-{name}"></style>\
-  </section>\
-</er-canvas>')
-    ], ErCanvas);
-    return ErCanvas;
-})(Riot.Element);
-ErCanvas.register();
-/// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
-/// <reference path="../resource/eventName.ts"/>
 var ErTop = (function (_super) {
     __extends(ErTop, _super);
     function ErTop() {
@@ -551,3 +427,131 @@ var ErTop = (function (_super) {
     return ErTop;
 })(Riot.Element);
 ErTop.register();
+/// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
+/// <reference path="../resource/eventName.ts"/>
+/// <reference path="../resource/exampleERD.ts"/>
+var ErCanvas = (function (_super) {
+    __extends(ErCanvas, _super);
+    function ErCanvas() {
+        var _this = this;
+        _super.call(this);
+        this.global = {};
+        this.tables = [];
+        this.relations = [];
+        this.mouse = {
+            isClick: false,
+            target: null,
+            offset: {
+                x: 0,
+                y: 0
+            }
+        };
+        this.onMouseDownTable = function (e) {
+            _this.mouse.isClick = true;
+            _this.mouse.target = e.item;
+            _this.mouse.offset.x = e.offsetX;
+            _this.mouse.offset.y = e.offsetY;
+        };
+        this.renderCSS = function (parent) {
+            return "\n    .pg-canvas-table-color-" + parent.name + " {\n      border-color: " + parent.border + " !important;\n    }\n    .pg-canvas-table-color-" + parent.name + " header {\n      background: " + parent.background.header + ";\n      color: " + parent.text.header + ";\n      border-color: " + parent.border + ";\n    }\n    .pg-canvas-table-color-" + parent.name + " main {\n      background: " + parent.background.body + ";\n      color: " + parent.text.body + ";\n    }";
+        };
+        this.renderRelation = function (relation) {
+            var line = _this.root.querySelector(".pg-canvas-svg-style-" + relation.name.physical);
+            var fromTable = _this.findTableByPhysicalName(relation.from.table);
+            var toTable = _this.findTableByPhysicalName(relation.to.table);
+            if (fromTable == null || toTable == null) {
+                return;
+            }
+            var fromElement = _this.root.querySelector('section[name="table-' + fromTable.name.physical + '"]');
+            var toElement = _this.root.querySelector('section[name="table-' + toTable.name.physical + '"]');
+            line.setAttribute("x1", (fromTable.position.x + fromElement.offsetWidth / 2).toString());
+            line.setAttribute("y1", (fromTable.position.y + fromElement.offsetHeight / 2).toString());
+            line.setAttribute("x2", (toTable.position.x + toElement.offsetWidth / 2).toString());
+            line.setAttribute("y2", (toTable.position.y + toElement.offsetHeight / 2).toString());
+            line.setAttribute("stroke", relation.style.color);
+            line.setAttribute("stroke-width", relation.style.width);
+            if (relation.style.dasharray) {
+                line.setAttribute("stroke-dasharray", relation.style.dasharray);
+            }
+        };
+        this.findTableByPhysicalName = function (tablePhysicalName) {
+            var targetTable = null;
+            _this.tables.forEach(function (table) {
+                if (table.name.physical == tablePhysicalName) {
+                    targetTable = table;
+                }
+            });
+            return targetTable;
+        };
+        this.global = {
+            colors: ExampleERD.colors
+        };
+        this.tables = ExampleERD.tables;
+        this.relations = ExampleERD.relations;
+        window.observable.on(EventName.app.onLoadFile, function (filePath) {
+            if (filePath) {
+            }
+        });
+        window.addEventListener("mousemove", function (e) {
+            if (_this.mouse.isClick) {
+                _this.mouse.target.position.x = e.pageX - _this.mouse.offset.x;
+                _this.mouse.target.position.y = e.pageY - _this.mouse.offset.y;
+                _this.update();
+                setTimeout(function () { return window.observable.trigger(EventName.canvas.onLineUpdate); }, 10);
+            }
+        });
+        window.addEventListener("mouseup", function (e) {
+            _this.mouse.isClick = false;
+            _this.mouse.target = null;
+        });
+        window.observable.on(EventName.canvas.onColorUpdate, function () {
+            _this.global["colors"].forEach(function (color) {
+                _this.update();
+                _this.root.querySelector(".pg-canvas-table-style-" + color.name).innerHTML = _this.renderCSS(color);
+            });
+        });
+        window.observable.on(EventName.canvas.onLineUpdate, function () {
+            _this.relations.forEach(function (relation) {
+                _this.update();
+                _this.renderRelation(relation);
+            });
+        });
+        this.on("mount", function () {
+            window.observable.trigger(EventName.canvas.onColorUpdate);
+            window.observable.trigger(EventName.canvas.onLineUpdate);
+        });
+    }
+    ErCanvas = __decorate([
+        template('\
+<er-canvas>\
+  <main class="pg-main-canvas">\
+    <svg each={relations} class="pg-canvas-svg" xmlns="http://www.w3.org/2000/svg">\
+      <line class="pg-canvas-svg-style-{name.physical}" />\
+    </svg>\
+    <div class="pg-canvas-container">\
+      <div class="pg-canvas-table" each={tables} style="left: {position.x}px; top: {position.y}px">\
+        <section name="table-{name.physical}" class="pg-canvas-table-color-{default: !color}{color}">\
+          <header onmousedown={onMouseDownTable}>\
+            <h1>{name.logical}<span if={name.logical && name.physical}> / </span>{name.physical}</h1>\
+          </header>\
+          <main>\
+            <ul>\
+              <li each={columns}>\
+                <h2>{name.logical}<span if={name.logical && name.physical}> / </span>{name.physical}</h2>\
+              </li>\
+            </ul>\
+          </main>\
+          <footer>\
+          </footer>\
+        </section>\
+      </div>\
+    </div>\
+  </main>\
+  <section each={global.colors}>\
+    <style class="pg-canvas-table-style-{name}"></style>\
+  </section>\
+</er-canvas>')
+    ], ErCanvas);
+    return ErCanvas;
+})(Riot.Element);
+ErCanvas.register();

@@ -76,7 +76,7 @@ class ErCanvas extends Riot.Element
         this.mouse.target.position.x = e.pageX - this.mouse.offset.x;
         this.mouse.target.position.y = e.pageY - this.mouse.offset.y;
         this.update();
-        setTimeout(() => window.observable.trigger("onLineUpdate"), 10);
+        setTimeout(() => window.observable.trigger(EventName.canvas.onLineUpdate), 10);
       }
     });
 
@@ -85,14 +85,14 @@ class ErCanvas extends Riot.Element
       this.mouse.target = null;
     });
 
-    window.observable.on("onColorUpdate", () => {
+    window.observable.on(EventName.canvas.onColorUpdate, () => {
       this.global["colors"].forEach(color => {
         this.update();
         this.root.querySelector(".pg-canvas-table-style-" + color.name).innerHTML = this.renderCSS(color);
       });
     });
 
-    window.observable.on("onLineUpdate", () => {
+    window.observable.on(EventName.canvas.onLineUpdate, () => {
       this.relations.forEach(relation => {
         this.update();
         this.renderRelation(relation);
@@ -100,8 +100,8 @@ class ErCanvas extends Riot.Element
     });
 
     this.on("mount", () => {
-      window.observable.trigger("onColorUpdate");
-      window.observable.trigger("onLineUpdate");
+      window.observable.trigger(EventName.canvas.onColorUpdate);
+      window.observable.trigger(EventName.canvas.onLineUpdate);
     });
   }
 

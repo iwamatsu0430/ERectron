@@ -11,7 +11,6 @@ interface Window {
 }
 
 var language = "en";
-// 最悪普通にファイル読み込み
 
 @template('\
 <app>\
