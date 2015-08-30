@@ -27,7 +27,11 @@ interface MouseEvent {
           <main>\
             <ul>\
               <li each={columns}>\
-                <h2>{name.logical}<span if={name.logical && name.physical}> / </span>{name.physical}</h2>\
+                <h2>\
+                  <span>{name.logical}</span>\
+                  <span if={name.logical && name.physical}> / </span>\
+                  <span>{name.physical}</span>\
+                </h2>\
               </li>\
             </ul>\
           </main>\
@@ -35,6 +39,8 @@ interface MouseEvent {
           </footer>\
         </section>\
       </div>\
+    </div>\
+    <div><!-- menu -->\
     </div>\
   </main>\
   <section each={global.colors}>\

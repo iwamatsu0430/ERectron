@@ -358,77 +358,6 @@ var ExampleERD = (function () {
 })();
 /// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
 /// <reference path="../resource/eventName.ts"/>
-var ErTop = (function (_super) {
-    __extends(ErTop, _super);
-    function ErTop() {
-        var _this = this;
-        _super.call(this);
-        this.onClickOpen = function (e) {
-            e.preventDefault();
-            return false;
-        };
-        this.onClickCreate = function (e) {
-            e.preventDefault();
-            window.observable.trigger(EventName.app.onLoadFile, null);
-            return false;
-        };
-        this.onClickRecent = function (e) {
-            e.preventDefault();
-            return false;
-        };
-        this.isOpenHover = false;
-        this.onMouseOverOpen = function (e) {
-            _this.isOpenHover = true;
-        };
-        this.onMouseOutOpen = function (e) {
-            _this.isOpenHover = false;
-        };
-        document.addEventListener("selectstart", function (e) { return e.preventDefault(); });
-    }
-    ErTop = __decorate([
-        template('\
-<er-top>\
-  <title>ERectron</title>\
-  <main class="pg-main-top">\
-    <header>\
-      <h1>ERectron</h1>\
-    </header>\
-    <ul>\
-      <li>\
-        <h2 class="pg-main-top-open">\
-          <a href="/open" onclick={onClickOpen} onmouseover={onMouseOverOpen} onmouseout={onMouseOutOpen}>\
-            <i class="fa fa-folder {pg-main-top-open-show: !isOpenHover}"></i>\
-            <i class="fa fa-folder-open {pg-main-top-open-show: isOpenHover}"></i>\
-            Open ERD\
-          </a>\
-        </h2>\
-      </li>\
-      <li>\
-        <h2 class="pg-main-top-create">\
-          <a href="/create" onclick={onClickCreate}>\
-            <i class="fa fa-file"></i> Create ERD\
-          </a>\
-        </h2>\
-      </li>\
-      <li>\
-        <h2 class="pg-main-top-recent">\
-          <a href="/recent" onclick={onClickRecent}>\
-            <i class="fa fa-history"></i> Open Recent\
-          </a>\
-        </h2>\
-      </li>\
-    </ul>\
-    <footer>\
-      <p>(c)2015 SAW APP</p>\
-    </footer>\
-  </main>\
-</er-top>')
-    ], ErTop);
-    return ErTop;
-})(Riot.Element);
-ErTop.register();
-/// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
-/// <reference path="../resource/eventName.ts"/>
 /// <reference path="../resource/exampleERD.ts"/>
 var ErCanvas = (function (_super) {
     __extends(ErCanvas, _super);
@@ -537,7 +466,11 @@ var ErCanvas = (function (_super) {
           <main>\
             <ul>\
               <li each={columns}>\
-                <h2>{name.logical}<span if={name.logical && name.physical}> / </span>{name.physical}</h2>\
+                <h2>\
+                  <span>{name.logical}</span>\
+                  <span if={name.logical && name.physical}> / </span>\
+                  <span>{name.physical}</span>\
+                </h2>\
               </li>\
             </ul>\
           </main>\
@@ -545,6 +478,8 @@ var ErCanvas = (function (_super) {
           </footer>\
         </section>\
       </div>\
+    </div>\
+    <div><!-- menu -->\
     </div>\
   </main>\
   <section each={global.colors}>\
@@ -555,3 +490,104 @@ var ErCanvas = (function (_super) {
     return ErCanvas;
 })(Riot.Element);
 ErCanvas.register();
+/// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
+var ErSettingColumn = (function (_super) {
+    __extends(ErSettingColumn, _super);
+    function ErSettingColumn() {
+        _super.apply(this, arguments);
+    }
+    ErSettingColumn = __decorate([
+        template('\
+<er-setting-column>\
+</er-setting-column>\
+')
+    ], ErSettingColumn);
+    return ErSettingColumn;
+})(Riot.Element);
+ErSettingColumn.register();
+/// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
+var ErSettingTable = (function (_super) {
+    __extends(ErSettingTable, _super);
+    function ErSettingTable() {
+        _super.apply(this, arguments);
+    }
+    ErSettingTable = __decorate([
+        template('\
+<er-setting-table>\
+</er-setting-table>\
+')
+    ], ErSettingTable);
+    return ErSettingTable;
+})(Riot.Element);
+ErSettingTable.register();
+/// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
+/// <reference path="../resource/eventName.ts"/>
+var ErTop = (function (_super) {
+    __extends(ErTop, _super);
+    function ErTop() {
+        var _this = this;
+        _super.call(this);
+        this.onClickOpen = function (e) {
+            e.preventDefault();
+            return false;
+        };
+        this.onClickCreate = function (e) {
+            e.preventDefault();
+            window.observable.trigger(EventName.app.onLoadFile, null);
+            return false;
+        };
+        this.onClickRecent = function (e) {
+            e.preventDefault();
+            return false;
+        };
+        this.isOpenHover = false;
+        this.onMouseOverOpen = function (e) {
+            _this.isOpenHover = true;
+        };
+        this.onMouseOutOpen = function (e) {
+            _this.isOpenHover = false;
+        };
+        document.addEventListener("selectstart", function (e) { return e.preventDefault(); });
+    }
+    ErTop = __decorate([
+        template('\
+<er-top>\
+  <title>ERectron</title>\
+  <main class="pg-main-top">\
+    <header>\
+      <h1>ERectron</h1>\
+    </header>\
+    <ul>\
+      <li>\
+        <h2 class="pg-main-top-open">\
+          <a href="/open" onclick={onClickOpen} onmouseover={onMouseOverOpen} onmouseout={onMouseOutOpen}>\
+            <i class="fa fa-folder {pg-main-top-open-show: !isOpenHover}"></i>\
+            <i class="fa fa-folder-open {pg-main-top-open-show: isOpenHover}"></i>\
+            Open ERD\
+          </a>\
+        </h2>\
+      </li>\
+      <li>\
+        <h2 class="pg-main-top-create">\
+          <a href="/create" onclick={onClickCreate}>\
+            <i class="fa fa-file"></i> Create ERD\
+          </a>\
+        </h2>\
+      </li>\
+      <li>\
+        <h2 class="pg-main-top-recent">\
+          <a href="/recent" onclick={onClickRecent}>\
+            <i class="fa fa-history"></i> Open Recent\
+          </a>\
+        </h2>\
+      </li>\
+    </ul>\
+    <footer>\
+      <p>(c)2015 SAW APP</p>\
+    </footer>\
+  </main>\
+</er-top>')
+    ], ErTop);
+    return ErTop;
+})(Riot.Element);
+ErTop.register();

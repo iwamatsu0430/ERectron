@@ -23,6 +23,8 @@
     "files": [
         "./app.ts",
         "./er-canvas/er-canvas.ts",
+        "./er-canvas/er-setting-column.ts",
+        "./er-canvas/er-setting-table.ts",
         "./er-top/er-top.ts",
         "./resource/eventName.ts",
         "./resource/exampleERD.ts"
