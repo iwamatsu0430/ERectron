@@ -1,0 +1,21 @@
+[
+  { "name": ["TINYINT", "INT1"],        "options": ["unsigned"] },
+  { "name": ["SMALLINT", "INT2"],       "options": ["unsigned"] },
+  { "name": ["MEDIUMINT", "INT3"],      "options": ["unsigned"] },
+  { "name": ["INT", "INTEGER", "INT4"], "options": ["unsigned"] },
+  { "name": ["BIGINT", "INT8"],         "options": ["unsigned"] },
+  { "name": ["FLOAT"],                  "options": ["unsigned"] },
+  { "name": ["DOUBLE"],                 "options": ["unsigned"] },
+  { "name": ["REAL"],                   "options": ["unsigned"] },
+  { "name": ["DECIMAL"],                "options": ["unsigned"] },
+  { "name": ["DEC"],                    "options": ["unsigned"] },
+  { "name": ["NUMERIC"],                "options": ["unsigned"] },
+  { "name": ["FIXED"],                  "options": ["unsigned"] },
+  { "name": ["BIT"],                    "options": [] },
+  { "name": ["BOOL"],                   "options": [] },
+  { "name": ["BOOLEAN"],                "options": [] },
+  { "name": ["TINYINT"],                "options": ["unsigned"] },
+
+  { "name": ["YEAR"],                   "options": [] },
+  { "name": ["DATE"],                   "options": [] }
+]

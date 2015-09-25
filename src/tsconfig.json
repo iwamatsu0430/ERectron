@@ -25,7 +25,14 @@
         "./er-canvas/er-canvas.ts",
         "./er-canvas/er-setting-column.ts",
         "./er-canvas/er-setting-table.ts",
+        "./er-canvas/er-setting.ts",
         "./er-top/er-top.ts",
+        "./models/mouse.ts",
+        "./models/name.ts",
+        "./models/relation.ts",
+        "./models/table.ts",
+        "./models/view.ts",
+        "./models/xy.ts",
         "./resource/eventName.ts",
         "./resource/exampleERD.ts"
     ]

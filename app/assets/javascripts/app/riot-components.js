@@ -6,7 +6,11 @@ var EventName = (function () {
     };
     EventName.canvas = {
         onColorUpdate: "onColorUpdate",
-        onLineUpdate: "onLineUpdate"
+        onLineUpdate: "onLineUpdate",
+        showSettingColumn: "showSettingColumn",
+        updateSettingColumn: "updateSettingColumn",
+        clickFilterColumn: "clickFilterColumn",
+        closeSettingColumn: "closeSettingColumn"
     };
     return EventName;
 })();
@@ -92,6 +96,9 @@ var ExampleERD = (function () {
             border: "#0AA2E4"
         },
     ];
+    ExampleERD.info = {
+        plugin: "mysql"
+    };
     ExampleERD.tables = [
         {
             name: {
@@ -103,42 +110,37 @@ var ExampleERD = (function () {
                     name: {
                         logical: "メンバーID",
                         physical: "_id"
-                    }
+                    },
+                    type: "varchar",
+                    primary: true
                 },
                 {
                     name: {
                         logical: "メールアドレス",
                         physical: "mail"
-                    }
+                    },
+                    type: "varchar"
                 },
                 {
                     name: {
                         logical: "パスワード",
                         physical: "password"
-                    }
+                    },
+                    type: "varchar"
                 },
                 {
                     name: {
                         logical: "確認済フラグ",
                         physical: "confirmed"
-                    }
+                    },
+                    type: "boolean"
                 }
-            ],
-            color: "myColor",
-            position: {
-                x: 100,
-                y: 100
-            }
+            ]
         },
         {
             name: {
                 logical: "ツイート",
                 physical: "tweet"
-            },
-            color: "myColor",
-            position: {
-                x: 300,
-                y: 100
             },
             columns: [
                 {
@@ -203,12 +205,7 @@ var ExampleERD = (function () {
                         physical: "valueScore"
                     }
                 }
-            ],
-            color: "myColor",
-            position: {
-                x: 100,
-                y: 100
-            }
+            ]
         },
         {
             name: {
@@ -240,14 +237,79 @@ var ExampleERD = (function () {
                         physical: "title"
                     }
                 }
-            ],
-            color: "myColor",
-            position: {
-                x: 100,
-                y: 100
-            }
+            ]
         }
     ];
+    ExampleERD.views = {
+        tables: [
+            {
+                name: "member",
+                position: {
+                    x: 100,
+                    y: 100
+                },
+                color: "myColor"
+            },
+            {
+                name: "tweet",
+                position: {
+                    x: 200,
+                    y: 200
+                },
+                color: "myColor"
+            },
+            {
+                name: "tweetValue",
+                position: {
+                    x: 300,
+                    y: 300
+                },
+                color: "myColor"
+            },
+            {
+                name: "tweetValue",
+                position: {
+                    x: 400,
+                    y: 400
+                },
+                color: "myColor"
+            },
+            {
+                name: "shareContents",
+                position: {
+                    x: 500,
+                    y: 500
+                },
+                color: "myColor"
+            }
+        ],
+        relations: [
+            {
+                name: "memberToTweet",
+                width: 2,
+                color: "#0AA2E4",
+                dasharray: "3 3"
+            },
+            {
+                name: "memberToShareContents",
+                width: 2,
+                color: "#0AA2E4",
+                dasharray: "3 3"
+            },
+            {
+                name: "tweetToTweetValue",
+                width: 2,
+                color: "#0AA2E4",
+                dasharray: "3 3"
+            },
+            {
+                name: "tweetToShareContents",
+                width: 2,
+                color: "#0AA2E4",
+                dasharray: "3 3"
+            },
+        ]
+    };
     ExampleERD.relations = [
         {
             name: {
@@ -365,21 +427,19 @@ var ErCanvas = (function (_super) {
         var _this = this;
         _super.call(this);
         this.global = {};
-        this.tables = [];
         this.relations = [];
-        this.mouse = {
-            isClick: false,
-            target: null,
-            offset: {
-                x: 0,
-                y: 0
-            }
-        };
+        this.mouseState = new MouseState();
         this.onMouseDownTable = function (e) {
-            _this.mouse.isClick = true;
-            _this.mouse.target = e.item;
-            _this.mouse.offset.x = e.offsetX;
-            _this.mouse.offset.y = e.offsetY;
+            _this.mouseState.isClick = true;
+            _this.mouseState.target = e.item;
+            _this.mouseState.offset.x = e.offsetX;
+            _this.mouseState.offset.y = e.offsetY;
+        };
+        this.onClickColumnLogical = function (e) {
+            window.observable.trigger(EventName.canvas.showSettingColumn, { item: e.item, position: { x: e.x, y: e.y }, target: false });
+        };
+        this.onClickColumnPhysical = function (e) {
+            window.observable.trigger(EventName.canvas.showSettingColumn, { item: e.item, position: { x: e.x, y: e.y }, target: true });
         };
         this.renderCSS = function (parent) {
             return "\n    .pg-canvas-table-color-" + parent.name + " {\n      border-color: " + parent.border + " !important;\n    }\n    .pg-canvas-table-color-" + parent.name + " header {\n      background: " + parent.background.header + ";\n      color: " + parent.text.header + ";\n      border-color: " + parent.border + ";\n    }\n    .pg-canvas-table-color-" + parent.name + " main {\n      background: " + parent.background.body + ";\n      color: " + parent.text.body + ";\n    }";
@@ -391,47 +451,94 @@ var ErCanvas = (function (_super) {
             if (fromTable == null || toTable == null) {
                 return;
             }
+            var fromPosition = _this.findPosition(fromTable.name.physical);
+            var toPosition = _this.findPosition(toTable.name.physical);
             var fromElement = _this.root.querySelector('section[name="table-' + fromTable.name.physical + '"]');
             var toElement = _this.root.querySelector('section[name="table-' + toTable.name.physical + '"]');
-            line.setAttribute("x1", (fromTable.position.x + fromElement.offsetWidth / 2).toString());
-            line.setAttribute("y1", (fromTable.position.y + fromElement.offsetHeight / 2).toString());
-            line.setAttribute("x2", (toTable.position.x + toElement.offsetWidth / 2).toString());
-            line.setAttribute("y2", (toTable.position.y + toElement.offsetHeight / 2).toString());
-            line.setAttribute("stroke", relation.style.color);
-            line.setAttribute("stroke-width", relation.style.width);
-            if (relation.style.dasharray) {
-                line.setAttribute("stroke-dasharray", relation.style.dasharray);
+            line.setAttribute("x1", (fromPosition.x + fromElement.offsetWidth / 2).toString());
+            line.setAttribute("y1", (fromPosition.y + fromElement.offsetHeight / 2).toString());
+            line.setAttribute("x2", (toPosition.x + toElement.offsetWidth / 2).toString());
+            line.setAttribute("y2", (toPosition.y + toElement.offsetHeight / 2).toString());
+            var relationView = _this.view.findRelationView(relation.name.physical);
+            line.setAttribute("stroke", relationView.color);
+            line.setAttribute("stroke-width", relationView.width + "px");
+            if (relationView.dashArray) {
+                line.setAttribute("stroke-dasharray", relationView.dashArray);
             }
         };
         this.findTableByPhysicalName = function (tablePhysicalName) {
-            var targetTable = null;
+            var target = null;
             _this.tables.forEach(function (table) {
-                if (table.name.physical == tablePhysicalName) {
-                    targetTable = table;
+                if (table.name.physical === tablePhysicalName) {
+                    target = table;
                 }
             });
-            return targetTable;
+            return target;
+        };
+        this.findPosition = function (tablePhysicalName) {
+            var view = _this.view.findTableView(tablePhysicalName);
+            if (view) {
+                return { x: view.position.x, y: view.position.y };
+            }
+            else {
+                return { x: 0, y: 0 };
+            }
+        };
+        this.findColor = function (tablePhysicalName) {
+            var view = _this.view.findTableView(tablePhysicalName);
+            if (view) {
+                return view.color;
+            }
+            else {
+                return null;
+            }
+        };
+        this.updateTableView = function (tableView) {
+            var tableViews = [];
+            _this.view.tables.forEach(function (tv) {
+                if (tableView.name === tv.name) {
+                    tableViews.push(tableView);
+                }
+                else {
+                    tableViews.push(tv);
+                }
+            });
+            _this.view = new View(tableViews, _this.view.relations);
+        };
+        this.updateRelationView = function (relationView) {
+            var relationViews = [];
+            _this.view.relations.forEach(function (rv) {
+                if (relationView.name === rv.name) {
+                    relationViews.push(relationView);
+                }
+                else {
+                    relationViews.push(rv);
+                }
+            });
+            _this.view = new View(_this.view.tables, relationViews);
         };
         this.global = {
             colors: ExampleERD.colors
         };
-        this.tables = ExampleERD.tables;
-        this.relations = ExampleERD.relations;
+        this.tables = Table.mapping(ExampleERD.tables);
+        this.view = View.mapping(ExampleERD.views);
+        this.relations = Relation.mapping(ExampleERD.relations);
         window.observable.on(EventName.app.onLoadFile, function (filePath) {
             if (filePath) {
             }
         });
         window.addEventListener("mousemove", function (e) {
-            if (_this.mouse.isClick) {
-                _this.mouse.target.position.x = e.pageX - _this.mouse.offset.x;
-                _this.mouse.target.position.y = e.pageY - _this.mouse.offset.y;
+            if (_this.mouseState.isClick) {
+                var view = _this.view.findTableView(_this.mouseState.target.name.physical);
+                var position = new XY(e.pageX - _this.mouseState.offset.x, e.pageY - _this.mouseState.offset.y);
+                _this.updateTableView(new TableView(view.name, position, view.color));
                 _this.update();
                 setTimeout(function () { return window.observable.trigger(EventName.canvas.onLineUpdate); }, 10);
             }
         });
         window.addEventListener("mouseup", function (e) {
-            _this.mouse.isClick = false;
-            _this.mouse.target = null;
+            _this.mouseState.isClick = false;
+            _this.mouseState.target = null;
         });
         window.observable.on(EventName.canvas.onColorUpdate, function () {
             _this.global["colors"].forEach(function (color) {
@@ -444,6 +551,9 @@ var ErCanvas = (function (_super) {
                 _this.update();
                 _this.renderRelation(relation);
             });
+        });
+        window.observable.on(EventName.canvas.updateSettingColumn, function () {
+            _this.update();
         });
         this.on("mount", function () {
             window.observable.trigger(EventName.canvas.onColorUpdate);
@@ -458,18 +568,22 @@ var ErCanvas = (function (_super) {
       <line class="pg-canvas-svg-style-{name.physical}" />\
     </svg>\
     <div class="pg-canvas-container">\
-      <div class="pg-canvas-table" each={tables} style="left: {position.x}px; top: {position.y}px">\
-        <section name="table-{name.physical}" class="pg-canvas-table-color-{default: !color}{color}">\
+      <div class="pg-canvas-table" each={tables} style="left: {findPosition(name.physical).x}px; top: {findPosition(name.physical).y}px">\
+        <section name="table-{name.physical}" class="pg-canvas-table-color-{default: !findColor(name.physical)}{findColor(name.physical)}">\
           <header onmousedown={onMouseDownTable}>\
-            <h1>{name.logical}<span if={name.logical && name.physical}> / </span>{name.physical}</h1>\
+            <h1>\
+              <span>{name.logical}</span>\
+              <span if={name.logical && name.physical}> / </span>\
+              <span>{name.physical}</span>\
+            </h1>\
           </header>\
           <main>\
             <ul>\
               <li each={columns}>\
                 <h2>\
-                  <span>{name.logical}</span>\
+                  <span class="pg-canvas-column-name" onclick={onClickColumnLogical}>{name.logical}</span>\
                   <span if={name.logical && name.physical}> / </span>\
-                  <span>{name.physical}</span>\
+                  <span class="pg-canvas-column-name" onclick={onClickColumnPhysical}>{name.physical}</span>\
                 </h2>\
               </li>\
             </ul>\
@@ -479,8 +593,7 @@ var ErCanvas = (function (_super) {
         </section>\
       </div>\
     </div>\
-    <div><!-- menu -->\
-    </div>\
+    <er-setting></er-setting>\
   </main>\
   <section each={global.colors}>\
     <style class="pg-canvas-table-style-{name}"></style>\
@@ -491,14 +604,81 @@ var ErCanvas = (function (_super) {
 })(Riot.Element);
 ErCanvas.register();
 /// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
+var Item;
+(function (Item) {
+    Item[Item["physicalName"] = 0] = "physicalName";
+    Item[Item["logicalName"] = 1] = "logicalName";
+})(Item || (Item = {}));
+var itemPhysical = Item[0];
+var itemLogical = Item[1];
 var ErSettingColumn = (function (_super) {
     __extends(ErSettingColumn, _super);
     function ErSettingColumn() {
-        _super.apply(this, arguments);
+        var _this = this;
+        _super.call(this);
+        this.onInputLogicalName = function (e) {
+            _this.nameItem.logical = _this.logicalName.value;
+            window.observable.trigger(EventName.canvas.updateSettingColumn);
+        };
+        this.onInputPhysicalName = function (e) {
+            _this.nameItem.physical = _this.physicalName.value;
+            window.observable.trigger(EventName.canvas.updateSettingColumn);
+        };
+        this.findInvalidItem = function () {
+            var logical = _this.logicalName.value;
+            var physical = _this.physicalName.value;
+            var items = [];
+            if (logical == "") {
+                items.push(itemLogical);
+            }
+            if (physical == "") {
+                items.push(itemPhysical);
+            }
+            return items;
+        };
+        window.observable.on(EventName.canvas.showSettingColumn, function (params) {
+            _this.logicalName.value = params.item.name.logical;
+            _this.physicalName.value = params.item.name.physical;
+            _this.initialLogicalName = params.item.name.logical;
+            _this.initialPhysicalName = params.item.name.physical;
+            _this.nameItem = params.item.name;
+            if (params.target) {
+                _this.physicalName.focus();
+            }
+            else {
+                _this.logicalName.focus();
+            }
+        });
+        window.observable.on(EventName.canvas.clickFilterColumn, function () {
+            var invalidItems = _this.findInvalidItem();
+            if (invalidItems.length > 0) {
+                if (!confirm("Cannot save " + invalidItems.join(", ") + " value. Do you want to close column setting window?")) {
+                    return;
+                }
+                if (invalidItems.indexOf(itemPhysical) >= 0) {
+                    _this.nameItem.physical = _this.initialPhysicalName;
+                }
+                if (invalidItems.indexOf(itemLogical) >= 0) {
+                    _this.nameItem.logical = _this.initialLogicalName;
+                }
+            }
+            window.observable.trigger(EventName.canvas.closeSettingColumn);
+            window.observable.trigger(EventName.canvas.updateSettingColumn);
+        });
     }
     ErSettingColumn = __decorate([
         template('\
 <er-setting-column>\
+  <div class="pg-canvas-setting-row">\
+    <div>\
+      <label>logical name</label>\
+      <input type="text" name="logicalName" oninput={onInputLogicalName}>\
+    </div>\
+    <div>\
+      <label>physical name</label>\
+      <input type="text" name="physicalName" oninput={onInputPhysicalName}>\
+    </div>\
+  </div>\
 </er-setting-column>\
 ')
     ], ErSettingColumn);
@@ -520,6 +700,184 @@ var ErSettingTable = (function (_super) {
     return ErSettingTable;
 })(Riot.Element);
 ErSettingTable.register();
+/// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
+/// <reference path="../resource/eventName.ts"/>
+var ErSetting = (function (_super) {
+    __extends(ErSetting, _super);
+    function ErSetting() {
+        var _this = this;
+        _super.call(this);
+        this.isTable = false;
+        this.isColumn = false;
+        this.left = 0;
+        this.top = 0;
+        this.onClickFilterTable = function (e) {
+        };
+        this.onClickFilterColumn = function (e) {
+            window.observable.trigger(EventName.canvas.clickFilterColumn);
+        };
+        window.observable.on(EventName.canvas.showSettingColumn, function (params) {
+            _this.isColumn = true;
+            _this.left = params.position.x;
+            _this.top = params.position.y + 10;
+            _this.update();
+        });
+        window.observable.on(EventName.canvas.closeSettingColumn, function () {
+            _this.isColumn = false;
+            _this.left = 0;
+            _this.top = 0;
+            _this.update();
+        });
+    }
+    ErSetting = __decorate([
+        template('\
+<er-setting>\
+  <div if={isTable} onclick={onClickFilterTable} class="pg-canvas-setting-filter"></div>\
+  <er-setting-table></er-setting-table>\
+  <div if={isColumn} onclick={onClickFilterColumn} class="pg-canvas-setting-filter"></div>\
+  <er-setting-column class={show: isColumn} style="left: {left}px; top: {top}px;"></er-setting-column>\
+</er-setting>')
+    ], ErSetting);
+    return ErSetting;
+})(Riot.Element);
+ErSetting.register();
+var MouseState = (function () {
+    function MouseState() {
+        this.isClick = false;
+        this.target = null;
+        this.offset = new XY(0, 0);
+    }
+    return MouseState;
+})();
+var LogicalPhysicalName = (function () {
+    function LogicalPhysicalName(logical, physical) {
+        this.logical = logical;
+        this.physical = physical;
+    }
+    return LogicalPhysicalName;
+})();
+var Relation = (function () {
+    function Relation(name, from, to) {
+        this.name = name;
+        this.from = from;
+        this.to = to;
+    }
+    Relation.mapping = function (relationJson) {
+        var relations = [];
+        relationJson.forEach(function (relation) {
+            var name = new LogicalPhysicalName("", relation.name.physical);
+            var fromCardinality = new RelationCardinality(relation.from.min, relation.from.max);
+            var from = new RelationTable(relation.from.table, relation.from.column, fromCardinality);
+            var toCardinality = new RelationCardinality(relation.to.min, relation.to.max);
+            var to = new RelationTable(relation.to.table, relation.to.column, toCardinality);
+            relations.push(new Relation(name, from, to));
+        });
+        return relations;
+    };
+    return Relation;
+})();
+var RelationTable = (function () {
+    function RelationTable(table, column, cardinality) {
+        this.table = table;
+        this.column = column;
+        this.cardinality = cardinality;
+    }
+    return RelationTable;
+})();
+var RelationCardinality = (function () {
+    function RelationCardinality(min, max) {
+        this.min = min;
+        this.max = max;
+    }
+    return RelationCardinality;
+})();
+var Table = (function () {
+    function Table(name, columns) {
+        this.name = name;
+        this.columns = columns;
+    }
+    Table.mapping = function (tableJsons) {
+        var tables = [];
+        tableJsons.forEach(function (table) {
+            var tableColumns = [];
+            table.columns.forEach(function (column) {
+                tableColumns.push(new TableColumn(new LogicalPhysicalName(column.name.logical, column.name.physical), column.type, column.primary));
+            });
+            tables.push(new Table(new LogicalPhysicalName(table.name.logical, table.name.physical), tableColumns));
+        });
+        return tables;
+    };
+    return Table;
+})();
+var TableColumn = (function () {
+    function TableColumn(name, type, primary) {
+        this.name = name;
+        this.type = type;
+        this.primary = primary;
+    }
+    return TableColumn;
+})();
+var View = (function () {
+    function View(tables, relations) {
+        var _this = this;
+        this.findTableView = function (tablePhysicalName) {
+            var target = null;
+            _this.tables.forEach(function (tv) {
+                if (tv.name === tablePhysicalName) {
+                    target = tv;
+                }
+            });
+            return target;
+        };
+        this.findRelationView = function (tablePhysicalName) {
+            var target = null;
+            _this.relations.forEach(function (rv) {
+                if (rv.name === tablePhysicalName) {
+                    target = rv;
+                }
+            });
+            return target;
+        };
+        this.tables = tables;
+        this.relations = relations;
+    }
+    View.mapping = function (viewJson) {
+        var tableViews = [];
+        viewJson.tables.forEach(function (table) {
+            tableViews.push(new TableView(table.name, new XY(table.position.x, table.position.y), table.color));
+        });
+        var relations = [];
+        viewJson.relations.forEach(function (relation) {
+            relations.push(new RelationView(relation.name, relation.width, relation.color, relation.dasharray));
+        });
+        return new View(tableViews, relations);
+    };
+    return View;
+})();
+var TableView = (function () {
+    function TableView(name, position, color) {
+        this.name = name;
+        this.position = position;
+        this.color = color;
+    }
+    return TableView;
+})();
+var RelationView = (function () {
+    function RelationView(name, width, color, dashArray) {
+        this.name = name;
+        this.width = width;
+        this.color = color;
+        this.dashArray = dashArray;
+    }
+    return RelationView;
+})();
+var XY = (function () {
+    function XY(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+    return XY;
+})();
 /// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
 /// <reference path="../resource/eventName.ts"/>
 var ErTop = (function (_super) {

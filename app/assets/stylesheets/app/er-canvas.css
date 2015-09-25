@@ -78,3 +78,7 @@ er-canvas {
   .pg-canvas-table footer {
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px; }
+
+.pg-canvas-column-name:hover {
+  cursor: pointer;
+  text-decoration: underline; }

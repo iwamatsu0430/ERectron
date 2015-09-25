@@ -80,3 +80,11 @@ er-canvas {
     border-bottom-right-radius: $border-radius-table;
   }
 }
+
+.pg-canvas-column-name {
+
+  &:hover {
+    cursor: pointer;
+    text-decoration: underline;
+  }
+}

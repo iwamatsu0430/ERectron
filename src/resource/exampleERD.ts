@@ -27,6 +27,10 @@ class ExampleERD {
     },
   ];
 
+  static info = {
+    plugin: "mysql"
+  }
+
   static tables = [
     {
       name: {
@@ -38,42 +42,37 @@ class ExampleERD {
           name: {
             logical: "メンバーID",
             physical: "_id"
-          }
+          },
+          type: "varchar",
+          primary: true
         },
         {
           name: {
             logical: "メールアドレス",
             physical: "mail"
-          }
+          },
+          type: "varchar"
         },
         {
           name: {
             logical: "パスワード",
             physical: "password"
-          }
+          },
+          type: "varchar"
         },
         {
           name: {
             logical: "確認済フラグ",
             physical: "confirmed"
-          }
+          },
+          type: "boolean"
         }
       ],
-      color: "myColor",
-      position: {
-        x: 100,
-        y: 100
-      },
     },
     {
       name: {
         logical: "ツイート",
         physical: "tweet"
-      },
-      color: "myColor",
-      position: {
-        x: 300,
-        y: 100
       },
       columns: [
         {
@@ -139,11 +138,6 @@ class ExampleERD {
           }
         }
       ],
-      color: "myColor",
-      position: {
-        x: 100,
-        y: 100
-      },
     },
     {
       name: {
@@ -176,13 +170,79 @@ class ExampleERD {
           }
         }
       ],
-      color: "myColor",
-      position: {
-        x: 100,
-        y: 100
-      },
     }
   ];
+
+  static views = {
+    tables: [
+      {
+        name: "member",
+        position: {
+          x: 100,
+          y: 100
+        },
+        color: "myColor"
+      },
+      {
+        name: "tweet",
+        position: {
+          x: 200,
+          y: 200
+        },
+        color: "myColor"
+      },
+      {
+        name: "tweetValue",
+        position: {
+          x: 300,
+          y: 300
+        },
+        color: "myColor"
+      },
+      {
+        name: "tweetValue",
+        position: {
+          x: 400,
+          y: 400
+        },
+        color: "myColor"
+      },
+      {
+        name: "shareContents",
+        position: {
+          x: 500,
+          y: 500
+        },
+        color: "myColor"
+      }
+    ],
+    relations: [
+      {
+        name: "memberToTweet",
+        width: 2,
+        color: "#0AA2E4",
+        dasharray: "3 3"
+      },
+      {
+        name: "memberToShareContents",
+        width: 2,
+        color: "#0AA2E4",
+        dasharray: "3 3"
+      },
+      {
+        name: "tweetToTweetValue",
+        width: 2,
+        color: "#0AA2E4",
+        dasharray: "3 3"
+      },
+      {
+        name: "tweetToShareContents",
+        width: 2,
+        color: "#0AA2E4",
+        dasharray: "3 3"
+      },
+    ]
+  };
 
   // cardinality:
   //   0 -> 0
