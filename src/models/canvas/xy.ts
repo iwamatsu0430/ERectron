@@ -1,4 +1,5 @@
 class XY {
+  
   x: number
   y: number
 

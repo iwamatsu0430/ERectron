@@ -8,15 +8,14 @@
   <div if={isColumn} onclick={onClickFilterColumn} class="pg-canvas-setting-filter"></div>\
   <er-setting-column class={show: isColumn} style="left: {left}px; top: {top}px;"></er-setting-column>\
 </er-setting>')
-class ErSetting extends Riot.Element
-{
-  isTable = false;
-  isColumn = false;
+class ErSetting extends Riot.Element {
 
-  left = 0;
-  top = 0;
+  isTable: boolean = false;
+  isColumn: boolean = false;
+  left: number = 0;
+  top: number = 0;
 
-  constructor() {
+  constructor () {
     super();
 
     window.observable.on(EventName.canvas.showSettingColumn, params => {

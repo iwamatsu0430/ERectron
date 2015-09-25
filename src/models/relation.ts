@@ -1,13 +1,8 @@
 class Relation {
+
   name: LogicalPhysicalName
   from: RelationTable
   to: RelationTable
-
-  constructor (name: LogicalPhysicalName, from: RelationTable, to: RelationTable) {
-    this.name = name;
-    this.from = from;
-    this.to = to;
-  }
 
   static mapping = relationJson => {
     var relations: Relation[] = [];
@@ -21,9 +16,16 @@ class Relation {
     });
     return relations;
   }
+
+  constructor (name: LogicalPhysicalName, from: RelationTable, to: RelationTable) {
+    this.name = name;
+    this.from = from;
+    this.to = to;
+  }
 }
 
 class RelationTable {
+
   table: string
   column: string
   cardinality: RelationCardinality
@@ -36,6 +38,7 @@ class RelationTable {
 }
 
 class RelationCardinality {
+  
   min: number
   max: number
 

@@ -1,14 +1,11 @@
 /// <reference path="../bower_components/riot-ts/riot-ts.d.ts" />
+/// <reference path="./declare.ts"/>
 /// <reference path="../d.ts/github-electron/github-electron.d.ts" />
 /// <reference path="./resource/eventName.ts"/>
 
 var fs      = require('fs');
 var remote  = require('remote');
 var dialog  = remote.require('dialog');
-
-interface Window {
-  observable: any;
-}
 
 var language = "en";
 
@@ -19,10 +16,11 @@ var language = "en";
     <er-canvas class={pg-canvas-display: isFileOpen}></er-canvas>\
   </div>\
 </app>')
-class App extends Riot.Element
-{
-   constructor(opts) {
+class App extends Riot.Element {
+
+   constructor (opts) {
      super();
+     
      document.ondragover = e => e.preventDefault();
      document.ondrop = e => e.preventDefault();
      window.observable = new Riot.Observable();

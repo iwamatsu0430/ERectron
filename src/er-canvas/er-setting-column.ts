@@ -1,13 +1,5 @@
 /// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
 
-enum Item {
-  physicalName,
-  logicalName
-}
-
-var itemPhysical = Item[0];
-var itemLogical = Item[1];
-
 @template('\
 <er-setting-column>\
   <div class="pg-canvas-setting-row">\
@@ -24,22 +16,18 @@ var itemLogical = Item[1];
 ')
 class ErSettingColumn extends Riot.Element {
 
-  nameItem
+  nameItem: LogicalPhysicalName;
+  initial: LogicalPhysicalName;
+  logicalName: any;
+  physicalName: any;
 
-  logicalName
-  physicalName
-
-  initialLogicalName
-  initialPhysicalName
-
-  constructor() {
+  constructor () {
     super();
 
     window.observable.on(EventName.canvas.showSettingColumn, params => {
       this.logicalName.value = params.item.name.logical;
       this.physicalName.value = params.item.name.physical;
-      this.initialLogicalName = params.item.name.logical;
-      this.initialPhysicalName = params.item.name.physical;
+      this.initial = new LogicalPhysicalName(this.logicalName.value, this.physicalName.value);
       this.nameItem = params.item.name;
       if (params.target) {
         this.physicalName.focus();
@@ -54,11 +42,11 @@ class ErSettingColumn extends Riot.Element {
         if (!confirm(`Cannot save ${invalidItems.join(", ")} value. Do you want to close column setting window?`)) {
           return;
         }
-        if (invalidItems.indexOf(itemPhysical) >= 0) {
-          this.nameItem.physical = this.initialPhysicalName;
+        if (invalidItems.indexOf("physicalName") >= 0) {
+          this.nameItem.physical = this.initial.physical;
         }
-        if (invalidItems.indexOf(itemLogical) >= 0) {
-          this.nameItem.logical = this.initialLogicalName;
+        if (invalidItems.indexOf("logicalName") >= 0) {
+          this.nameItem.logical = this.initial.logical;
         }
       }
       window.observable.trigger(EventName.canvas.closeSettingColumn);
@@ -77,14 +65,14 @@ class ErSettingColumn extends Riot.Element {
   };
 
   findInvalidItem = () => {
-    var logical = this.logicalName.value;
-    var physical = this.physicalName.value;
-    var items = [];
+    var logical: string = this.logicalName.value;
+    var physical: string = this.physicalName.value;
+    var items: string[] = [];
     if (logical == "") {
-      items.push(itemLogical);
+      items.push("logicalName");
     }
     if (physical == "") {
-      items.push(itemPhysical);
+      items.push("physicalName");
     }
     return items;
   }

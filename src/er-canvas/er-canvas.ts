@@ -1,16 +1,7 @@
 /// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
+/// <reference path="../declare.ts"/>
 /// <reference path="../resource/eventName.ts"/>
 /// <reference path="../resource/exampleERD.ts"/>
-
-interface Element {
-  innerHTML: any;
-  offsetWidth: any;
-  offsetHeight: any;
-}
-
-interface MouseEvent {
-  item: any;
-}
 
 @template('\
 <er-canvas>\
@@ -46,29 +37,25 @@ interface MouseEvent {
     </div>\
     <er-setting></er-setting>\
   </main>\
-  <section each={global.colors}>\
+  <section each={colors}>\
     <style class="pg-canvas-table-style-{name}"></style>\
   </section>\
 </er-canvas>')
-class ErCanvas extends Riot.Element
-{
-  global = {};
+class ErCanvas extends Riot.Element {
+
+  colors: Color[];
   tables: Table[];
   view: View;
-  relations = [];
-  relations2: Relation[];
+  relations: Relation[];
   mouseState: MouseState = new MouseState();
 
-  constructor() {
+  constructor () {
     super();
 
-    this.global = {
-      colors: ExampleERD.colors
-    };
+    this.colors = Color.mapping(ExampleERD.colors);
     this.tables = Table.mapping(ExampleERD.tables);
     this.view = View.mapping(ExampleERD.views);
     this.relations = Relation.mapping(ExampleERD.relations);
-    // this.relations = ExampleERD.relations;
 
     window.observable.on(EventName.app.onLoadFile, (filePath: string) => {
       if (filePath) {
@@ -92,7 +79,7 @@ class ErCanvas extends Riot.Element
     });
 
     window.observable.on(EventName.canvas.onColorUpdate, () => {
-      this.global["colors"].forEach(color => {
+      this.colors.forEach(color => {
         this.update();
         this.root.querySelector(".pg-canvas-table-style-" + color.name).innerHTML = this.renderCSS(color);
       });
@@ -147,17 +134,17 @@ class ErCanvas extends Riot.Element
   }
 
   renderRelation = relation => {
-    var line = this.root.querySelector(".pg-canvas-svg-style-" + relation.name.physical);
-    var fromTable = this.findTableByPhysicalName(relation.from.table);
-    var toTable = this.findTableByPhysicalName(relation.to.table);
+    var line: Element = this.root.querySelector(".pg-canvas-svg-style-" + relation.name.physical);
+    var fromTable: Table = this.findTableByPhysicalName(relation.from.table);
+    var toTable: Table = this.findTableByPhysicalName(relation.to.table);
     if (fromTable == null || toTable == null) {
       return;
     }
 
-    var fromPosition = this.findPosition(fromTable.name.physical);
-    var toPosition = this.findPosition(toTable.name.physical);
-    var fromElement = this.root.querySelector('section[name="table-' + fromTable.name.physical + '"]');
-    var toElement = this.root.querySelector('section[name="table-' + toTable.name.physical + '"]');
+    var fromPosition: XY = this.findPosition(fromTable.name.physical);
+    var toPosition: XY = this.findPosition(toTable.name.physical);
+    var fromElement: Element = this.root.querySelector('section[name="table-' + fromTable.name.physical + '"]');
+    var toElement: Element = this.root.querySelector('section[name="table-' + toTable.name.physical + '"]');
 
     line.setAttribute("x1", (fromPosition.x + fromElement.offsetWidth / 2).toString());
     line.setAttribute("y1", (fromPosition.y + fromElement.offsetHeight / 2).toString());
@@ -172,7 +159,7 @@ class ErCanvas extends Riot.Element
   }
 
   findTableByPhysicalName = tablePhysicalName => {
-    var target = null;
+    var target: Table = null;
     this.tables.forEach(table => {
       if (table.name.physical === tablePhysicalName) {
         target = table;
@@ -184,9 +171,9 @@ class ErCanvas extends Riot.Element
   findPosition = (tablePhysicalName: string) => {
     var view: TableView = this.view.findTableView(tablePhysicalName);
     if (view) {
-      return {x: view.position.x, y: view.position.y}
+      return new XY(view.position.x, view.position.y);
     } else {
-      return {x: 0, y: 0};
+      return new XY(0, 0);
     }
   }
 

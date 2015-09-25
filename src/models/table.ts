@@ -1,11 +1,4 @@
 class Table {
-  name: LogicalPhysicalName
-  columns: TableColumn[]
-
-  constructor (name: LogicalPhysicalName, columns: TableColumn[]) {
-    this.name = name;
-    this.columns = columns;
-  }
 
   static mapping = tableJsons => {
     var tables: Table[] = [];
@@ -18,9 +11,18 @@ class Table {
     });
     return tables;
   }
+
+  name: LogicalPhysicalName
+  columns: TableColumn[]
+
+  constructor (name: LogicalPhysicalName, columns: TableColumn[]) {
+    this.name = name;
+    this.columns = columns;
+  }
 }
 
 class TableColumn {
+  
   name: LogicalPhysicalName
   type: string
   primary: boolean

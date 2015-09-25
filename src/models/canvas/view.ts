@@ -1,11 +1,4 @@
 class View {
-  tables: TableView[]
-  relations: RelationView[]
-
-  constructor (tables: TableView[], relations: RelationView[]) {
-    this.tables = tables
-    this.relations = relations
-  }
 
   static mapping = viewJson => {
     var tableViews: TableView[] = [];
@@ -17,6 +10,14 @@ class View {
       relations.push(new RelationView(relation.name, relation.width, relation.color, relation.dasharray));
     });
     return new View(tableViews, relations);
+  }
+
+  tables: TableView[];
+  relations: RelationView[];
+
+  constructor (tables: TableView[], relations: RelationView[]) {
+    this.tables = tables
+    this.relations = relations
   }
 
   findTableView = (tablePhysicalName: string) => {
@@ -41,6 +42,7 @@ class View {
 }
 
 class TableView {
+
    name: string
    position: XY
    color: string
@@ -53,6 +55,7 @@ class TableView {
 }
 
 class RelationView {
+
   name: string
   width: number
   color: string

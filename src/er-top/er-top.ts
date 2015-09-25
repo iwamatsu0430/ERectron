@@ -38,9 +38,9 @@
     </footer>\
   </main>\
 </er-top>')
-class ErTop extends Riot.Element
-{
-  constructor() {
+class ErTop extends Riot.Element {
+  
+  constructor () {
     super();
     document.addEventListener("selectstart", e => e.preventDefault());
   }

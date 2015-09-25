@@ -1,4 +1,5 @@
 class LogicalPhysicalName {
+  
   logical: string
   physical: string
 
