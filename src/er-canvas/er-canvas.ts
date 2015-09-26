@@ -117,7 +117,7 @@ class ErCanvas extends Riot.Element {
     window.observable.trigger(EventName.canvas.showSettingColumn, {item: e.item, position: {x: e.x, y: e.y}, target: true});
   }
 
-  renderCSS = parent => {
+  renderCSS = (parent: Color) => {
     return `
     .pg-canvas-table-color-${parent.name} {
       border-color: ${parent.border} !important;
@@ -133,7 +133,7 @@ class ErCanvas extends Riot.Element {
     }`;
   }
 
-  renderRelation = relation => {
+  renderRelation = (relation: Relation) => {
     var line: Element = this.root.querySelector(".pg-canvas-svg-style-" + relation.name.physical);
     var fromTable: Table = this.findTableByPhysicalName(relation.from.table);
     var toTable: Table = this.findTableByPhysicalName(relation.to.table);
@@ -158,7 +158,7 @@ class ErCanvas extends Riot.Element {
     }
   }
 
-  findTableByPhysicalName = tablePhysicalName => {
+  findTableByPhysicalName = (tablePhysicalName: string) => {
     var target: Table = null;
     this.tables.forEach(table => {
       if (table.name.physical === tablePhysicalName) {
@@ -198,7 +198,7 @@ class ErCanvas extends Riot.Element {
     this.view = new View(tableViews, this.view.relations);
   }
 
-  updateRelationView = relationView => {
+  updateRelationView = (relationView: RelationView) => {
     var relationViews: RelationView[] = [];
     this.view.relations.forEach((rv: RelationView) => {
         if (relationView.name === rv.name) {

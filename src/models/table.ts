@@ -1,10 +1,10 @@
 class Table {
 
-  static mapping = tableJsons => {
+  static mapping = (tableJsons: any) => {
     var tables: Table[] = [];
-    tableJsons.forEach(table => {
+    tableJsons.forEach((table: any) => {
       var tableColumns: TableColumn[] = [];
-      table.columns.forEach(column => {
+      table.columns.forEach((column: any) => {
           tableColumns.push(new TableColumn(new LogicalPhysicalName(column.name.logical, column.name.physical), column.type, column.primary));
       });
       tables.push(new Table(new LogicalPhysicalName(table.name.logical, table.name.physical), tableColumns));
@@ -22,7 +22,7 @@ class Table {
 }
 
 class TableColumn {
-  
+
   name: LogicalPhysicalName
   type: string
   primary: boolean

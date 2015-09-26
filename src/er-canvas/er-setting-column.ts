@@ -24,7 +24,7 @@ class ErSettingColumn extends Riot.Element {
   constructor () {
     super();
 
-    window.observable.on(EventName.canvas.showSettingColumn, params => {
+    window.observable.on(EventName.canvas.showSettingColumn, (params: any) => {
       this.logicalName.value = params.item.name.logical;
       this.physicalName.value = params.item.name.physical;
       this.initial = new LogicalPhysicalName(this.logicalName.value, this.physicalName.value);

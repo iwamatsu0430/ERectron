@@ -4,9 +4,9 @@ class Relation {
   from: RelationTable
   to: RelationTable
 
-  static mapping = relationJson => {
+  static mapping = (relationJson: any) => {
     var relations: Relation[] = [];
-    relationJson.forEach(relation => {
+    relationJson.forEach((relation: any) => {
       var name: LogicalPhysicalName = new LogicalPhysicalName("", relation.name.physical);
       var fromCardinality = new RelationCardinality(relation.from.min, relation.from.max);
       var from: RelationTable = new RelationTable(relation.from.table, relation.from.column, fromCardinality);
@@ -38,7 +38,7 @@ class RelationTable {
 }
 
 class RelationCardinality {
-  
+
   min: number
   max: number
 

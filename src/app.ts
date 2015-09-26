@@ -18,9 +18,9 @@ var language = "en";
 </app>')
 class App extends Riot.Element {
 
-   constructor (opts) {
+   constructor (opts: any) {
      super();
-     
+
      document.ondragover = e => e.preventDefault();
      document.ondrop = e => e.preventDefault();
      window.observable = new Riot.Observable();
@@ -33,11 +33,11 @@ class App extends Riot.Element {
 
    isFileOpen = false;
 
-   onDragOver = e => e.preventDefault();
+   onDragOver = (e: MouseEvent) => e.preventDefault();
 
-   onDragLeave = e => e.preventDefault();
+   onDragLeave = (e: MouseEvent) => e.preventDefault();
 
-   onDrop = e => {
+   onDrop = (e: any) => {
      e.preventDefault();
      var filePath = e.dataTransfer.files[0];
    }

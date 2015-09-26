@@ -18,7 +18,7 @@ class ErSetting extends Riot.Element {
   constructor () {
     super();
 
-    window.observable.on(EventName.canvas.showSettingColumn, params => {
+    window.observable.on(EventName.canvas.showSettingColumn, (params: any) => {
       this.isColumn = true;
       this.left = params.position.x;
       this.top = params.position.y + 10;

@@ -39,35 +39,35 @@
   </main>\
 </er-top>')
 class ErTop extends Riot.Element {
-  
+
+  isOpenHover: boolean = false;
+
   constructor () {
     super();
     document.addEventListener("selectstart", e => e.preventDefault());
   }
 
-  onClickOpen = e => {
+  onClickOpen = (e: MouseEvent) => {
     e.preventDefault();
     return false;
   }
 
-  onClickCreate = e => {
+  onClickCreate = (e: MouseEvent) => {
     e.preventDefault();
     window.observable.trigger(EventName.app.onLoadFile, null);
     return false;
   }
 
-  onClickRecent = e => {
+  onClickRecent = (e: MouseEvent) => {
     e.preventDefault();
     return false;
-  };
+  }
 
-  isOpenHover = false;
-
-  onMouseOverOpen = e => {
+  onMouseOverOpen = (e: MouseEvent) => {
     this.isOpenHover = true;
   }
 
-  onMouseOutOpen = e => {
+  onMouseOutOpen = (e: MouseEvent) => {
     this.isOpenHover = false;
   }
 }

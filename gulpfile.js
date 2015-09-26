@@ -63,6 +63,8 @@ gulp.task("typescript", function() {
   return gulp.src(typescriptFiles)
     .pipe(tsc({
       typescript: require("typescript"),
+      target: 'ES5',
+      experimentalDecorators: true,
       noImplicitAny: true,
       removeComments: true,
       out: 'riot-components.js'

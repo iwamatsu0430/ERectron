@@ -15,6 +15,7 @@ var EventName = (function () {
     return EventName;
 })();
 /// <reference path="../bower_components/riot-ts/riot-ts.d.ts" />
+/// <reference path="./declare.ts"/>
 /// <reference path="../d.ts/github-electron/github-electron.d.ts" />
 /// <reference path="./resource/eventName.ts"/>
 var __extends = (this && this.__extends) || function (d, b) {
@@ -135,7 +136,7 @@ var ExampleERD = (function () {
                     },
                     type: "boolean"
                 }
-            ]
+            ],
         },
         {
             name: {
@@ -173,7 +174,7 @@ var ExampleERD = (function () {
                         physical: "deleted"
                     }
                 }
-            ]
+            ],
         },
         {
             name: {
@@ -205,7 +206,7 @@ var ExampleERD = (function () {
                         physical: "valueScore"
                     }
                 }
-            ]
+            ],
         },
         {
             name: {
@@ -237,7 +238,7 @@ var ExampleERD = (function () {
                         physical: "title"
                     }
                 }
-            ]
+            ],
         }
     ];
     ExampleERD.views = {
@@ -419,6 +420,7 @@ var ExampleERD = (function () {
     return ExampleERD;
 })();
 /// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
+/// <reference path="../declare.ts"/>
 /// <reference path="../resource/eventName.ts"/>
 /// <reference path="../resource/exampleERD.ts"/>
 var ErCanvas = (function (_super) {
@@ -426,8 +428,6 @@ var ErCanvas = (function (_super) {
     function ErCanvas() {
         var _this = this;
         _super.call(this);
-        this.global = {};
-        this.relations = [];
         this.mouseState = new MouseState();
         this.onMouseDownTable = function (e) {
             _this.mouseState.isClick = true;
@@ -478,10 +478,10 @@ var ErCanvas = (function (_super) {
         this.findPosition = function (tablePhysicalName) {
             var view = _this.view.findTableView(tablePhysicalName);
             if (view) {
-                return { x: view.position.x, y: view.position.y };
+                return new XY(view.position.x, view.position.y);
             }
             else {
-                return { x: 0, y: 0 };
+                return new XY(0, 0);
             }
         };
         this.findColor = function (tablePhysicalName) {
@@ -517,9 +517,7 @@ var ErCanvas = (function (_super) {
             });
             _this.view = new View(_this.view.tables, relationViews);
         };
-        this.global = {
-            colors: ExampleERD.colors
-        };
+        this.colors = Color.mapping(ExampleERD.colors);
         this.tables = Table.mapping(ExampleERD.tables);
         this.view = View.mapping(ExampleERD.views);
         this.relations = Relation.mapping(ExampleERD.relations);
@@ -541,7 +539,7 @@ var ErCanvas = (function (_super) {
             _this.mouseState.target = null;
         });
         window.observable.on(EventName.canvas.onColorUpdate, function () {
-            _this.global["colors"].forEach(function (color) {
+            _this.colors.forEach(function (color) {
                 _this.update();
                 _this.root.querySelector(".pg-canvas-table-style-" + color.name).innerHTML = _this.renderCSS(color);
             });
@@ -595,7 +593,7 @@ var ErCanvas = (function (_super) {
     </div>\
     <er-setting></er-setting>\
   </main>\
-  <section each={global.colors}>\
+  <section each={colors}>\
     <style class="pg-canvas-table-style-{name}"></style>\
   </section>\
 </er-canvas>')
@@ -604,13 +602,6 @@ var ErCanvas = (function (_super) {
 })(Riot.Element);
 ErCanvas.register();
 /// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
-var Item;
-(function (Item) {
-    Item[Item["physicalName"] = 0] = "physicalName";
-    Item[Item["logicalName"] = 1] = "logicalName";
-})(Item || (Item = {}));
-var itemPhysical = Item[0];
-var itemLogical = Item[1];
 var ErSettingColumn = (function (_super) {
     __extends(ErSettingColumn, _super);
     function ErSettingColumn() {
@@ -629,18 +620,17 @@ var ErSettingColumn = (function (_super) {
             var physical = _this.physicalName.value;
             var items = [];
             if (logical == "") {
-                items.push(itemLogical);
+                items.push("logicalName");
             }
             if (physical == "") {
-                items.push(itemPhysical);
+                items.push("physicalName");
             }
             return items;
         };
         window.observable.on(EventName.canvas.showSettingColumn, function (params) {
             _this.logicalName.value = params.item.name.logical;
             _this.physicalName.value = params.item.name.physical;
-            _this.initialLogicalName = params.item.name.logical;
-            _this.initialPhysicalName = params.item.name.physical;
+            _this.initial = new LogicalPhysicalName(_this.logicalName.value, _this.physicalName.value);
             _this.nameItem = params.item.name;
             if (params.target) {
                 _this.physicalName.focus();
@@ -655,11 +645,11 @@ var ErSettingColumn = (function (_super) {
                 if (!confirm("Cannot save " + invalidItems.join(", ") + " value. Do you want to close column setting window?")) {
                     return;
                 }
-                if (invalidItems.indexOf(itemPhysical) >= 0) {
-                    _this.nameItem.physical = _this.initialPhysicalName;
+                if (invalidItems.indexOf("physicalName") >= 0) {
+                    _this.nameItem.physical = _this.initial.physical;
                 }
-                if (invalidItems.indexOf(itemLogical) >= 0) {
-                    _this.nameItem.logical = _this.initialLogicalName;
+                if (invalidItems.indexOf("logicalName") >= 0) {
+                    _this.nameItem.logical = _this.initial.logical;
                 }
             }
             window.observable.trigger(EventName.canvas.closeSettingColumn);
@@ -741,14 +731,77 @@ var ErSetting = (function (_super) {
     return ErSetting;
 })(Riot.Element);
 ErSetting.register();
-var MouseState = (function () {
-    function MouseState() {
-        this.isClick = false;
-        this.target = null;
-        this.offset = new XY(0, 0);
+/// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
+/// <reference path="../resource/eventName.ts"/>
+var ErTop = (function (_super) {
+    __extends(ErTop, _super);
+    function ErTop() {
+        var _this = this;
+        _super.call(this);
+        this.isOpenHover = false;
+        this.onClickOpen = function (e) {
+            e.preventDefault();
+            return false;
+        };
+        this.onClickCreate = function (e) {
+            e.preventDefault();
+            window.observable.trigger(EventName.app.onLoadFile, null);
+            return false;
+        };
+        this.onClickRecent = function (e) {
+            e.preventDefault();
+            return false;
+        };
+        this.onMouseOverOpen = function (e) {
+            _this.isOpenHover = true;
+        };
+        this.onMouseOutOpen = function (e) {
+            _this.isOpenHover = false;
+        };
+        document.addEventListener("selectstart", function (e) { return e.preventDefault(); });
     }
-    return MouseState;
-})();
+    ErTop = __decorate([
+        template('\
+<er-top>\
+  <title>ERectron</title>\
+  <main class="pg-main-top">\
+    <header>\
+      <h1>ERectron</h1>\
+    </header>\
+    <ul>\
+      <li>\
+        <h2 class="pg-main-top-open">\
+          <a href="/open" onclick={onClickOpen} onmouseover={onMouseOverOpen} onmouseout={onMouseOutOpen}>\
+            <i class="fa fa-folder {pg-main-top-open-show: !isOpenHover}"></i>\
+            <i class="fa fa-folder-open {pg-main-top-open-show: isOpenHover}"></i>\
+            Open ERD\
+          </a>\
+        </h2>\
+      </li>\
+      <li>\
+        <h2 class="pg-main-top-create">\
+          <a href="/create" onclick={onClickCreate}>\
+            <i class="fa fa-file"></i> Create ERD\
+          </a>\
+        </h2>\
+      </li>\
+      <li>\
+        <h2 class="pg-main-top-recent">\
+          <a href="/recent" onclick={onClickRecent}>\
+            <i class="fa fa-history"></i> Open Recent\
+          </a>\
+        </h2>\
+      </li>\
+    </ul>\
+    <footer>\
+      <p>(c)2015 SAW APP</p>\
+    </footer>\
+  </main>\
+</er-top>')
+    ], ErTop);
+    return ErTop;
+})(Riot.Element);
+ErTop.register();
 var LogicalPhysicalName = (function () {
     function LogicalPhysicalName(logical, physical) {
         this.logical = logical;
@@ -817,6 +870,40 @@ var TableColumn = (function () {
     }
     return TableColumn;
 })();
+var Color = (function () {
+    function Color(name, text, background, border) {
+        this.name = name;
+        this.text = text;
+        this.background = background;
+        this.border = border;
+    }
+    Color.mapping = function (colorJson) {
+        var colors = [];
+        colorJson.forEach(function (color) {
+            var text = new HeaderBodyColor(color.text.header, color.text.body);
+            var background = new HeaderBodyColor(color.background.header, color.background.body);
+            ;
+            colors.push(new Color(color.name, text, background, color.border));
+        });
+        return colors;
+    };
+    return Color;
+})();
+var HeaderBodyColor = (function () {
+    function HeaderBodyColor(header, body) {
+        this.header = header;
+        this.body = body;
+    }
+    return HeaderBodyColor;
+})();
+var MouseState = (function () {
+    function MouseState() {
+        this.isClick = false;
+        this.target = null;
+        this.offset = new XY(0, 0);
+    }
+    return MouseState;
+})();
 var View = (function () {
     function View(tables, relations) {
         var _this = this;
@@ -878,74 +965,3 @@ var XY = (function () {
     }
     return XY;
 })();
-/// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
-/// <reference path="../resource/eventName.ts"/>
-var ErTop = (function (_super) {
-    __extends(ErTop, _super);
-    function ErTop() {
-        var _this = this;
-        _super.call(this);
-        this.onClickOpen = function (e) {
-            e.preventDefault();
-            return false;
-        };
-        this.onClickCreate = function (e) {
-            e.preventDefault();
-            window.observable.trigger(EventName.app.onLoadFile, null);
-            return false;
-        };
-        this.onClickRecent = function (e) {
-            e.preventDefault();
-            return false;
-        };
-        this.isOpenHover = false;
-        this.onMouseOverOpen = function (e) {
-            _this.isOpenHover = true;
-        };
-        this.onMouseOutOpen = function (e) {
-            _this.isOpenHover = false;
-        };
-        document.addEventListener("selectstart", function (e) { return e.preventDefault(); });
-    }
-    ErTop = __decorate([
-        template('\
-<er-top>\
-  <title>ERectron</title>\
-  <main class="pg-main-top">\
-    <header>\
-      <h1>ERectron</h1>\
-    </header>\
-    <ul>\
-      <li>\
-        <h2 class="pg-main-top-open">\
-          <a href="/open" onclick={onClickOpen} onmouseover={onMouseOverOpen} onmouseout={onMouseOutOpen}>\
-            <i class="fa fa-folder {pg-main-top-open-show: !isOpenHover}"></i>\
-            <i class="fa fa-folder-open {pg-main-top-open-show: isOpenHover}"></i>\
-            Open ERD\
-          </a>\
-        </h2>\
-      </li>\
-      <li>\
-        <h2 class="pg-main-top-create">\
-          <a href="/create" onclick={onClickCreate}>\
-            <i class="fa fa-file"></i> Create ERD\
-          </a>\
-        </h2>\
-      </li>\
-      <li>\
-        <h2 class="pg-main-top-recent">\
-          <a href="/recent" onclick={onClickRecent}>\
-            <i class="fa fa-history"></i> Open Recent\
-          </a>\
-        </h2>\
-      </li>\
-    </ul>\
-    <footer>\
-      <p>(c)2015 SAW APP</p>\
-    </footer>\
-  </main>\
-</er-top>')
-    ], ErTop);
-    return ErTop;
-})(Riot.Element);
-ErTop.register();

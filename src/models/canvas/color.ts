@@ -1,8 +1,8 @@
 class Color {
 
-  static mapping = colorJson => {
+  static mapping = (colorJson: any) => {
     var colors: Color[] = [];
-    colorJson.forEach(color => {
+    colorJson.forEach((color: any) => {
       var text: HeaderBodyColor = new HeaderBodyColor(color.text.header, color.text.body);
       var background: HeaderBodyColor = new HeaderBodyColor(color.background.header, color.background.body);;
       colors.push(new Color(color.name, text, background, color.border));

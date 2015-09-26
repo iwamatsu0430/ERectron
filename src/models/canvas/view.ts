@@ -1,12 +1,12 @@
 class View {
 
-  static mapping = viewJson => {
+  static mapping = (viewJson: any) => {
     var tableViews: TableView[] = [];
-    viewJson.tables.forEach(table => {
+    viewJson.tables.forEach((table: any) => {
       tableViews.push(new TableView(table.name, new XY(table.position.x, table.position.y), table.color));
     });
     var relations: RelationView[] = [];
-    viewJson.relations.forEach(relation => {
+    viewJson.relations.forEach((relation: any) => {
       relations.push(new RelationView(relation.name, relation.width, relation.color, relation.dasharray));
     });
     return new View(tableViews, relations);
@@ -22,7 +22,7 @@ class View {
 
   findTableView = (tablePhysicalName: string) => {
     var target: TableView = null;
-    this.tables.forEach(tv => {
+    this.tables.forEach((tv: TableView) => {
       if (tv.name === tablePhysicalName) {
         target = tv;
       }
@@ -32,7 +32,7 @@ class View {
 
   findRelationView = (tablePhysicalName: string) => {
     var target: RelationView = null;
-    this.relations.forEach(rv => {
+    this.relations.forEach((rv: RelationView) => {
       if (rv.name === tablePhysicalName) {
         target = rv;
       }
