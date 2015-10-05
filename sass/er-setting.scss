@@ -13,6 +13,10 @@ er-setting {
 .pg-canvas-setting-row {
   display: table;
 
+  & + .pg-canvas-setting-row {
+    margin-top: 10px;
+  }
+
   & > div {
     display: table-cell;
     table-layout: fixed;
@@ -34,7 +38,7 @@ er-setting-column {
   opacity: 0;
   height: 0;
   box-shadow: $shadow-setting;
-  transition: height 0.2s, opacity 0.2s padding 0.2s;
+  transition: height 0.5s, opacity 0.5s padding 0.5s;
 
   & input {
     height: 0;
@@ -48,6 +52,13 @@ er-setting-column {
     height: auto;
 
     & input {
+      height: auto;
+      padding: $space-0;
+      border: 1px solid #ccc;
+    }
+
+    & select {
+      -webkit-appearance: none;
       height: auto;
       padding: $space-0;
       border: 1px solid #ccc;

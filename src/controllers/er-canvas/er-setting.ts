@@ -1,13 +1,8 @@
-/// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
-/// <reference path="../resource/eventName.ts"/>
+/// <reference path="../../../bower_components/riot-ts/riot-ts.d.ts" />
+/// <reference path="../../resources/eventName.ts"/>
+/// <reference path="../../utils/viewUtil.ts"/>
 
-@template('\
-<er-setting>\
-  <div if={isTable} onclick={onClickFilterTable} class="pg-canvas-setting-filter"></div>\
-  <er-setting-table></er-setting-table>\
-  <div if={isColumn} onclick={onClickFilterColumn} class="pg-canvas-setting-filter"></div>\
-  <er-setting-column class={show: isColumn} style="left: {left}px; top: {top}px;"></er-setting-column>\
-</er-setting>')
+@template(ViewUtil.loadView("view/er-canvas/er-setting.html"))
 class ErSetting extends Riot.Element {
 
   isTable: boolean = false;

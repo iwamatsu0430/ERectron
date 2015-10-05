@@ -1,0 +1,6 @@
+<er-setting>
+  <div if={isTable} onclick={onClickFilterTable} class="pg-canvas-setting-filter"></div>
+  <er-setting-table></er-setting-table>
+  <div if={isColumn} onclick={onClickFilterColumn} class="pg-canvas-setting-filter"></div>
+  <er-setting-column class={show: isColumn} style="left: {left}px; top: {top}px;"></er-setting-column>
+</er-setting>

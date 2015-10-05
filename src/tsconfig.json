@@ -21,21 +21,26 @@
         "!./node_modules/**/*"
     ],
     "files": [
-        "./app.ts",
-        "./declare.ts",
-        "./er-canvas/er-canvas.ts",
-        "./er-canvas/er-setting-column.ts",
-        "./er-canvas/er-setting-table.ts",
-        "./er-canvas/er-setting.ts",
-        "./er-top/er-top.ts",
+        "./controllers/common/er-app.ts",
+        "./controllers/common/er-keylistener.ts",
+        "./controllers/er-canvas/er-canvas.ts",
+        "./controllers/er-canvas/er-setting-column.ts",
+        "./controllers/er-canvas/er-setting-table.ts",
+        "./controllers/er-canvas/er-setting.ts",
+        "./controllers/er-top/er-top.ts",
         "./models/canvas/color.ts",
         "./models/canvas/mouse.ts",
         "./models/canvas/view.ts",
         "./models/canvas/xy.ts",
+        "./models/dbPlugin.ts",
+        "./models/declare.ts",
+        "./models/enum.ts",
+        "./models/environment.ts",
         "./models/name.ts",
         "./models/relation.ts",
         "./models/table.ts",
-        "./resource/eventName.ts",
-        "./resource/exampleERD.ts"
+        "./resources/eventName.ts",
+        "./resources/exampleERD.ts",
+        "./utils/viewUtil.ts"
     ]
 }

@@ -1,48 +1,13 @@
-/// <reference path="../../bower_components/riot-ts/riot-ts.d.ts" />
-/// <reference path="../declare.ts"/>
-/// <reference path="../resource/eventName.ts"/>
-/// <reference path="../resource/exampleERD.ts"/>
+/// <reference path="../../../bower_components/riot-ts/riot-ts.d.ts" />
+/// <reference path="../../models/declare.ts"/>
+/// <reference path="../../resources/eventName.ts"/>
+/// <reference path="../../resources/exampleERD.ts"/>
+/// <reference path="../../utils/viewUtil.ts"/>
 
-@template('\
-<er-canvas>\
-  <main class="pg-main-canvas">\
-    <svg each={relations} class="pg-canvas-svg" xmlns="http://www.w3.org/2000/svg">\
-      <line class="pg-canvas-svg-style-{name.physical}" />\
-    </svg>\
-    <div class="pg-canvas-container">\
-      <div class="pg-canvas-table" each={tables} style="left: {findPosition(name.physical).x}px; top: {findPosition(name.physical).y}px">\
-        <section name="table-{name.physical}" class="pg-canvas-table-color-{default: !findColor(name.physical)}{findColor(name.physical)}">\
-          <header onmousedown={onMouseDownTable}>\
-            <h1>\
-              <span>{name.logical}</span>\
-              <span if={name.logical && name.physical}> / </span>\
-              <span>{name.physical}</span>\
-            </h1>\
-          </header>\
-          <main>\
-            <ul>\
-              <li each={columns}>\
-                <h2>\
-                  <span class="pg-canvas-column-name" onclick={onClickColumnLogical}>{name.logical}</span>\
-                  <span if={name.logical && name.physical}> / </span>\
-                  <span class="pg-canvas-column-name" onclick={onClickColumnPhysical}>{name.physical}</span>\
-                </h2>\
-              </li>\
-            </ul>\
-          </main>\
-          <footer>\
-          </footer>\
-        </section>\
-      </div>\
-    </div>\
-    <er-setting></er-setting>\
-  </main>\
-  <section each={colors}>\
-    <style class="pg-canvas-table-style-{name}"></style>\
-  </section>\
-</er-canvas>')
+@template(ViewUtil.loadView("view/er-canvas/er-canvas.html"))
 class ErCanvas extends Riot.Element {
 
+  environment: Environment;
   colors: Color[];
   tables: Table[];
   view: View;
@@ -51,7 +16,11 @@ class ErCanvas extends Riot.Element {
 
   constructor () {
     super();
+    this.loadContents();
+  }
 
+  loadContents = () => {
+    this.environment = Environment.mapping(ExampleERD.environment);
     this.colors = Color.mapping(ExampleERD.colors);
     this.tables = Table.mapping(ExampleERD.tables);
     this.view = View.mapping(ExampleERD.views);
@@ -61,6 +30,9 @@ class ErCanvas extends Riot.Element {
       if (filePath) {
         // TODO load file
       }
+
+      window.observable.trigger(EventName.canvas.onColorUpdate);
+      window.observable.trigger(EventName.canvas.onLineUpdate);
     });
 
     window.addEventListener("mousemove", (e: MouseEvent) => {
@@ -81,7 +53,12 @@ class ErCanvas extends Riot.Element {
     window.observable.on(EventName.canvas.onColorUpdate, () => {
       this.colors.forEach(color => {
         this.update();
-        this.root.querySelector(".pg-canvas-table-style-" + color.name).innerHTML = this.renderCSS(color);
+        var target = this.root.querySelector(".pg-canvas-table-style-" + color.name);
+        if (target.hasChildNodes("style")) {
+          var style = document.createElement("style");
+          target.appendChild(style);
+        }
+        this.root.querySelector(".pg-canvas-table-style-" + color.name + " style").innerHTML = this.renderCSS(color);
       });
     });
 
@@ -95,11 +72,6 @@ class ErCanvas extends Riot.Element {
     window.observable.on(EventName.canvas.updateSettingColumn, () => {
       this.update();
     });
-
-    this.on("mount", () => {
-      window.observable.trigger(EventName.canvas.onColorUpdate);
-      window.observable.trigger(EventName.canvas.onLineUpdate);
-    });
   }
 
   onMouseDownTable = (e: MouseEvent) => {
@@ -110,11 +82,11 @@ class ErCanvas extends Riot.Element {
   }
 
   onClickColumnLogical = (e: MouseEvent) => {
-    window.observable.trigger(EventName.canvas.showSettingColumn, {item: e.item, position: {x: e.x, y: e.y}, target: false});
+    window.observable.trigger(EventName.canvas.showSettingColumn, {item: e.item, position: new XY(e.x, e.y), target: LogicalPhysicalNameEnum.logical});
   }
 
   onClickColumnPhysical = (e: MouseEvent) => {
-    window.observable.trigger(EventName.canvas.showSettingColumn, {item: e.item, position: {x: e.x, y: e.y}, target: true});
+    window.observable.trigger(EventName.canvas.showSettingColumn, {item: e.item, position: new XY(e.x, e.y), target: LogicalPhysicalNameEnum.physical});
   }
 
   renderCSS = (parent: Color) => {

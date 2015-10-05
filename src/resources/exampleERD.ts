@@ -1,5 +1,9 @@
 class ExampleERD {
 
+  static environment = {
+    dbPlugin: "mysql"
+  }
+
   static colors = [
     {
       name: "myColor",

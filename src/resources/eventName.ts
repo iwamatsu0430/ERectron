@@ -1,7 +1,9 @@
 class EventName {
 
   static app = {
-    onLoadFile:           "onAppLoadFile"
+    onLoadFile:           "onAppLoadFile",
+    onKeyDown:            "onKeyDown",
+    onKeyUp:              "onKeyUp"
   };
 
   static canvas = {

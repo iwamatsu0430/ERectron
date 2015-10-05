@@ -1,0 +1,37 @@
+<er-canvas>
+  <main class="pg-main-canvas">
+    <svg each={relations} class="pg-canvas-svg" xmlns="http://www.w3.org/2000/svg">
+      <line class="pg-canvas-svg-style-{name.physical}" />
+    </svg>
+    <div class="pg-canvas-container">
+      <div class="pg-canvas-table" each={tables} style="left: {findPosition(name.physical).x}px; top: {findPosition(name.physical).y}px">
+        <section name="table-{name.physical}" class="pg-canvas-table-color-{default: !findColor(name.physical)}{findColor(name.physical)}">
+          <header onmousedown={onMouseDownTable}>
+            <h1>
+              <span>{name.logical}</span>
+              <span if={name.logical && name.physical}> / </span>
+              <span>{name.physical}</span>
+            </h1>
+          </header>
+          <main>
+            <ul>
+              <li each={columns}>
+                <h2>
+                  <span class="pg-canvas-column-name" onclick={onClickColumnLogical}>{name.logical}</span>
+                  <span if={name.logical && name.physical}> / </span>
+                  <span class="pg-canvas-column-name" onclick={onClickColumnPhysical}>{name.physical}</span>
+                </h2>
+              </li>
+            </ul>
+          </main>
+          <footer>
+          </footer>
+        </section>
+      </div>
+    </div>
+    <er-setting></er-setting>
+  </main>
+  <section each={colors} class="pg-canvas-table-style-{name}">
+    <style class="pg-canvas-table-style-{name}"></style>
+  </section>
+</er-canvas>

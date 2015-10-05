@@ -28,6 +28,8 @@ er-setting {
 
 .pg-canvas-setting-row {
   display: table; }
+  .pg-canvas-setting-row + .pg-canvas-setting-row {
+    margin-top: 10px; }
   .pg-canvas-setting-row > div {
     display: table-cell;
     table-layout: fixed;
@@ -45,7 +47,7 @@ er-setting-column {
   opacity: 0;
   height: 0;
   box-shadow: rgba(0, 0, 0, 0.2) 0 0 3px 3px;
-  transition: height 0.2s, opacity 0.2s padding 0.2s; }
+  transition: height 0.5s, opacity 0.5s padding 0.5s; }
   er-setting-column input {
     height: 0;
     padding: 0;
@@ -55,6 +57,11 @@ er-setting-column {
     padding: 5px;
     height: auto; }
     er-setting-column.show input {
+      height: auto;
+      padding: 5px;
+      border: 1px solid #ccc; }
+    er-setting-column.show select {
+      -webkit-appearance: none;
       height: auto;
       padding: 5px;
       border: 1px solid #ccc; }
