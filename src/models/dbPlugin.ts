@@ -9,8 +9,8 @@ class DBPlugin {
   }
 
   loadDBPlugin = (dbPluginName: string) => {
-    var fs = require("fs");
-    var pluginPath: string = `./plugins/${dbPluginName}/type.json`;
+    let fs = require("fs");
+    let pluginPath: string = `./plugins/${dbPluginName}/type.json`;
     fs.readFile(pluginPath, (error: Error, bytes: number[]) => {
       if (error !== null) {
         return;

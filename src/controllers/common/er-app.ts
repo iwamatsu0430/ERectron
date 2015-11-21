@@ -3,13 +3,13 @@
 /// <reference path="../../resources/eventName.ts"/>
 /// <reference path="../../utils/viewUtil.ts"/>
 
-var fs      = require('fs');
-var remote  = require('remote');
-var dialog  = remote.require('dialog');
+let fs      = require('fs');
+let remote  = require('remote');
+let dialog  = remote.require('dialog');
 
-var language = "en";
+let language = "en";
 
-@template(ViewUtil.loadView("view/common/er-app.html"))
+@template(ViewUtil.loadView("common/er-app.html"))
 class ErApp extends Riot.Element {
 
    constructor (opts: any) {
@@ -33,12 +33,12 @@ class ErApp extends Riot.Element {
 
    onDrop = (e: any) => {
      e.preventDefault();
-     var filePath = e.dataTransfer.files[0];
+     let filePath = e.dataTransfer.files[0];
    }
 
   //  onLoadFile = e => {
   //    e.preventDefault();
-  //    var options = {
+  //    let options = {
   //        title: 'Select .erm file',
   //        filters: [
   //          { name: 'ERM Json', extensions: ['json'] },
@@ -47,13 +47,13 @@ class ErApp extends Riot.Element {
   //    };
   //    dialog.showOpenDialog(null, options, fn => {
   //      console.log(fn);
-  //      var path = fn[0];
+  //      let path = fn[0];
   //      fs.readFile(path, (error, text) => {
   //     		if (error != null) {
   //     			alert('error : ' + error);
   //     			return ;
   //     		}
-  //         var value = text.toString();
+  //         let value = text.toString();
   //         console.log(value);
   //         dialog.showSaveDialog(null, {
   //           title: "ERM save",

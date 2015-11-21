@@ -508,105 +508,10 @@ var ViewUtil = (function () {
     }
     ViewUtil.loadView = function (path) {
         var fs = require("fs");
-        var source = fs.readFileSync(path).toString();
+        var source = fs.readFileSync("view/" + path).toString();
         return source;
     };
     return ViewUtil;
-})();
-var Color = (function () {
-    function Color(name, text, background, border) {
-        this.name = name;
-        this.text = text;
-        this.background = background;
-        this.border = border;
-    }
-    Color.mapping = function (colorJson) {
-        var colors = [];
-        colorJson.forEach(function (color) {
-            var text = new HeaderBodyColor(color.text.header, color.text.body);
-            var background = new HeaderBodyColor(color.background.header, color.background.body);
-            ;
-            colors.push(new Color(color.name, text, background, color.border));
-        });
-        return colors;
-    };
-    return Color;
-})();
-var HeaderBodyColor = (function () {
-    function HeaderBodyColor(header, body) {
-        this.header = header;
-        this.body = body;
-    }
-    return HeaderBodyColor;
-})();
-var MouseState = (function () {
-    function MouseState() {
-        this.isClick = false;
-        this.target = null;
-        this.offset = new XY(0, 0);
-    }
-    return MouseState;
-})();
-var View = (function () {
-    function View(tables, relations) {
-        var _this = this;
-        this.findTableView = function (tablePhysicalName) {
-            var target = null;
-            _this.tables.forEach(function (tv) {
-                if (tv.name === tablePhysicalName) {
-                    target = tv;
-                }
-            });
-            return target;
-        };
-        this.findRelationView = function (tablePhysicalName) {
-            var target = null;
-            _this.relations.forEach(function (rv) {
-                if (rv.name === tablePhysicalName) {
-                    target = rv;
-                }
-            });
-            return target;
-        };
-        this.tables = tables;
-        this.relations = relations;
-    }
-    View.mapping = function (viewJson) {
-        var tableViews = [];
-        viewJson.tables.forEach(function (table) {
-            tableViews.push(new TableView(table.name, new XY(table.position.x, table.position.y), table.color));
-        });
-        var relations = [];
-        viewJson.relations.forEach(function (relation) {
-            relations.push(new RelationView(relation.name, relation.width, relation.color, relation.dasharray));
-        });
-        return new View(tableViews, relations);
-    };
-    return View;
-})();
-var TableView = (function () {
-    function TableView(name, position, color) {
-        this.name = name;
-        this.position = position;
-        this.color = color;
-    }
-    return TableView;
-})();
-var RelationView = (function () {
-    function RelationView(name, width, color, dashArray) {
-        this.name = name;
-        this.width = width;
-        this.color = color;
-        this.dashArray = dashArray;
-    }
-    return RelationView;
-})();
-var XY = (function () {
-    function XY(x, y) {
-        this.x = x;
-        this.y = y;
-    }
-    return XY;
 })();
 /// <reference path="../../../bower_components/riot-ts/riot-ts.d.ts" />
 /// <reference path="../../../d.ts/github-electron/github-electron.d.ts" />
@@ -651,7 +556,7 @@ var ErApp = (function (_super) {
         });
     }
     ErApp = __decorate([
-        template(ViewUtil.loadView("view/common/er-app.html"))
+        template(ViewUtil.loadView("common/er-app.html"))
     ], ErApp);
     return ErApp;
 })(Riot.Element);
@@ -670,11 +575,32 @@ var ErKeyListener = (function (_super) {
         });
     }
     ErKeyListener = __decorate([
-        template(ViewUtil.loadView("view/common/er-keylistener.html"))
+        template(ViewUtil.loadView("common/er-keylistener.html"))
     ], ErKeyListener);
     return ErKeyListener;
 })(Riot.Element);
 ErKeyListener.register();
+/// <reference path="../../../bower_components/riot-ts/riot-ts.d.ts" />
+/// <reference path="../../utils/viewUtil.ts"/>
+var ErCanvasTable = (function (_super) {
+    __extends(ErCanvasTable, _super);
+    function ErCanvasTable() {
+        var _this = this;
+        _super.apply(this, arguments);
+        this.mouseState = new MouseState();
+        this.onMouseDownTable = function (e) {
+            _this.mouseState.isClick = true;
+            _this.mouseState.target = e.item;
+            _this.mouseState.offset.x = e.offsetX;
+            _this.mouseState.offset.y = e.offsetY;
+        };
+    }
+    ErCanvasTable = __decorate([
+        template(ViewUtil.loadView("er-canvas/er-canvas-table.html"))
+    ], ErCanvasTable);
+    return ErCanvasTable;
+})(Riot.Element);
+ErCanvasTable.register();
 /// <reference path="../../../bower_components/riot-ts/riot-ts.d.ts" />
 /// <reference path="../../models/declare.ts"/>
 /// <reference path="../../resources/eventName.ts"/>
@@ -823,7 +749,7 @@ var ErCanvas = (function (_super) {
         this.loadContents();
     }
     ErCanvas = __decorate([
-        template(ViewUtil.loadView("view/er-canvas/er-canvas.html"))
+        template(ViewUtil.loadView("er-canvas/er-canvas.html"))
     ], ErCanvas);
     return ErCanvas;
 })(Riot.Element);
@@ -900,7 +826,7 @@ var ErSettingColumn = (function (_super) {
         });
     }
     ErSettingColumn = __decorate([
-        template(ViewUtil.loadView("view/er-canvas/er-setting-column.html"))
+        template(ViewUtil.loadView("er-canvas/er-setting-column.html"))
     ], ErSettingColumn);
     return ErSettingColumn;
 })(Riot.Element);
@@ -913,7 +839,7 @@ var ErSettingTable = (function (_super) {
         _super.apply(this, arguments);
     }
     ErSettingTable = __decorate([
-        template(ViewUtil.loadView("view/er-canvas/er-setting-table.html"))
+        template(ViewUtil.loadView("er-canvas/er-setting-table.html"))
     ], ErSettingTable);
     return ErSettingTable;
 })(Riot.Element);
@@ -949,7 +875,7 @@ var ErSetting = (function (_super) {
         });
     }
     ErSetting = __decorate([
-        template(ViewUtil.loadView("view/er-canvas/er-setting.html"))
+        template(ViewUtil.loadView("er-canvas/er-setting.html"))
     ], ErSetting);
     return ErSetting;
 })(Riot.Element);
@@ -985,8 +911,114 @@ var ErTop = (function (_super) {
         document.addEventListener("selectstart", function (e) { return e.preventDefault(); });
     }
     ErTop = __decorate([
-        template(ViewUtil.loadView("view/er-top/er-top.html"))
+        template(ViewUtil.loadView("er-top/er-top.html"))
     ], ErTop);
     return ErTop;
 })(Riot.Element);
 ErTop.register();
+var Color = (function () {
+    function Color(name, text, background, border) {
+        this.name = name;
+        this.text = text;
+        this.background = background;
+        this.border = border;
+    }
+    Color.mapping = function (colorJson) {
+        var colors = [];
+        colorJson.forEach(function (color) {
+            var text = new HeaderBodyColor(color.text.header, color.text.body);
+            var background = new HeaderBodyColor(color.background.header, color.background.body);
+            ;
+            colors.push(new Color(color.name, text, background, color.border));
+        });
+        return colors;
+    };
+    return Color;
+})();
+var HeaderBodyColor = (function () {
+    function HeaderBodyColor(header, body) {
+        this.header = header;
+        this.body = body;
+    }
+    return HeaderBodyColor;
+})();
+var MouseState = (function () {
+    function MouseState() {
+        this.isClick = false;
+        this.target = null;
+        this.offset = new XY(0, 0);
+    }
+    return MouseState;
+})();
+var Size = (function () {
+    function Size(width, height) {
+        this.width = width;
+        this.height = height;
+    }
+    return Size;
+})();
+var View = (function () {
+    function View(tables, relations) {
+        var _this = this;
+        this.findTableView = function (tablePhysicalName) {
+            var target = null;
+            _this.tables.forEach(function (tv) {
+                if (tv.name === tablePhysicalName) {
+                    target = tv;
+                }
+            });
+            return target;
+        };
+        this.findRelationView = function (tablePhysicalName) {
+            var target = null;
+            _this.relations.forEach(function (rv) {
+                if (rv.name === tablePhysicalName) {
+                    target = rv;
+                }
+            });
+            return target;
+        };
+        this.tables = tables;
+        this.relations = relations;
+    }
+    View.mapping = function (viewJson) {
+        var tableViews = [];
+        viewJson.tables.forEach(function (table) {
+            tableViews.push(new TableView(table.name, new XY(table.position.x, table.position.y), table.color));
+        });
+        var relations = [];
+        viewJson.relations.forEach(function (relation) {
+            relations.push(new RelationView(relation.name, relation.width, relation.color, relation.dasharray));
+        });
+        return new View(tableViews, relations);
+    };
+    return View;
+})();
+var TableView = (function () {
+    function TableView(name, position, color) {
+        this.name = name;
+        this.position = position;
+        this.color = color;
+    }
+    TableView.prototype.getSize = function () {
+        var table = document.querySelector("section[name=\"table-" + this.name + "\"]");
+        return new Size(table.offsetWidth, table.offsetHeight);
+    };
+    return TableView;
+})();
+var RelationView = (function () {
+    function RelationView(name, width, color, dashArray) {
+        this.name = name;
+        this.width = width;
+        this.color = color;
+        this.dashArray = dashArray;
+    }
+    return RelationView;
+})();
+var XY = (function () {
+    function XY(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+    return XY;
+})();

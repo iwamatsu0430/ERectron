@@ -2,7 +2,7 @@
 /// <reference path="../../resources/eventName.ts"/>
 /// <reference path="../../utils/viewUtil.ts"/>
 
-@template(ViewUtil.loadView("view/er-canvas/er-setting.html"))
+@template(ViewUtil.loadView("er-canvas/er-setting.html"))
 class ErSetting extends Riot.Element {
 
   isTable: boolean = false;

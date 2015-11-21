@@ -2,7 +2,7 @@
 /// <reference path="../../resources/eventName.ts"/>
 /// <reference path="../../utils/viewUtil.ts"/>
 
-@template(ViewUtil.loadView("view/er-top/er-top.html"))
+@template(ViewUtil.loadView("er-top/er-top.html"))
 class ErTop extends Riot.Element {
 
   isOpenHover: boolean = false;

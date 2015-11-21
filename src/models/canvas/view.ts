@@ -1,11 +1,11 @@
 class View {
 
   static mapping = (viewJson: any) => {
-    var tableViews: TableView[] = [];
+    let tableViews: TableView[] = [];
     viewJson.tables.forEach((table: any) => {
       tableViews.push(new TableView(table.name, new XY(table.position.x, table.position.y), table.color));
     });
-    var relations: RelationView[] = [];
+    let relations: RelationView[] = [];
     viewJson.relations.forEach((relation: any) => {
       relations.push(new RelationView(relation.name, relation.width, relation.color, relation.dasharray));
     });
@@ -21,7 +21,7 @@ class View {
   }
 
   findTableView = (tablePhysicalName: string) => {
-    var target: TableView = null;
+    let target: TableView = null;
     this.tables.forEach((tv: TableView) => {
       if (tv.name === tablePhysicalName) {
         target = tv;
@@ -31,7 +31,7 @@ class View {
   }
 
   findRelationView = (tablePhysicalName: string) => {
-    var target: RelationView = null;
+    let target: RelationView = null;
     this.relations.forEach((rv: RelationView) => {
       if (rv.name === tablePhysicalName) {
         target = rv;
@@ -51,6 +51,11 @@ class TableView {
      this.name = name;
      this.position = position;
      this.color = color;
+   }
+
+   getSize () {
+     let table = document.querySelector(`section[name="table-${this.name}"]`);
+     return new Size(table.offsetWidth, table.offsetHeight);
    }
 }
 

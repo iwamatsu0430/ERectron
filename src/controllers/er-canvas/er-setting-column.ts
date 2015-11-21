@@ -1,7 +1,7 @@
 /// <reference path="../../../bower_components/riot-ts/riot-ts.d.ts" />
 /// <reference path="../../utils/viewUtil.ts"/>
 
-@template(ViewUtil.loadView("view/er-canvas/er-setting-column.html"))
+@template(ViewUtil.loadView("er-canvas/er-setting-column.html"))
 class ErSettingColumn extends Riot.Element {
 
   nameItem: LogicalPhysicalName;
@@ -54,9 +54,9 @@ class ErSettingColumn extends Riot.Element {
   };
 
   findInvalidItem = () => {
-    var logical: string = this.logicalName.value;
-    var physical: string = this.physicalName.value;
-    var items: LogicalPhysicalNameEnum[] = [];
+    let logical: string = this.logicalName.value;
+    let physical: string = this.physicalName.value;
+    let items: LogicalPhysicalNameEnum[] = [];
     if (logical === "") {
       items.push(LogicalPhysicalNameEnum.logical);
     }
@@ -67,7 +67,7 @@ class ErSettingColumn extends Riot.Element {
   }
 
   close = () => {
-    var invalidItems: LogicalPhysicalNameEnum[] = this.findInvalidItem();
+    let invalidItems: LogicalPhysicalNameEnum[] = this.findInvalidItem();
     if (invalidItems.length > 0) {
       if (!confirm(`Cannot save ${invalidItems.join(", ")} value. Do you want to close column setting window?`)) {
         return;
